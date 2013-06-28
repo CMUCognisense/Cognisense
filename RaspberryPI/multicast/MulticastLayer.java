@@ -33,8 +33,9 @@ public class MulticastLayer {
 	public boolean DEBUG;
 	private SQLiteJDBC db;
 	
-	//TODO the sequence number can clash 
-	
+	public String getDeviceID() {
+		return deviceID;
+	}
 	
 	Random rndNumbers;
 	private HashMap<String, Integer> requestMap;
