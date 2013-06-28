@@ -4,10 +4,17 @@ import java.util.Set;
 
 
 public class Service {
-		String serviceid;
-		Set<Action> actions;
-		Set<Trigger> trigger;
-		Property[] properties;
+		private String serviceid;
+		private String serviceType;
+		private Set<Action> actions;
+		private Set<Trigger> trigger;
+		private Property[] properties;
+		public String getServiceid() {
+			return serviceid;
+		}
+		public void setServiceid(String serviceid) {
+			this.serviceid = serviceid;
+		}
 		
 		
 		

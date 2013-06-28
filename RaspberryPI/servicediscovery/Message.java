@@ -31,11 +31,23 @@ public class Message {
 	private String srcServiceID;
 	
 	
-	public Message() {
+	public Message(Service service) {
 		serviceType = new LinkedList<String>();
 		property = new LinkedList<String>();
+		srcServiceID = service.getServiceid();
 	}
 	
+	/**
+	 * this method generated a message from the given message object that is to be sent
+	 * by the service discovery layer. The service discovery object calls this method
+	 * @return
+	 */
+	public String generateMessage() {
+		
+		
+		
+		return null;
+	}
 	
 }
 
