@@ -145,6 +145,6 @@ public class Location extends Property {
 		if(speakerLocation.match(map))
 			System.out.println("The location is a match for "+ map.toString());
 		else
-			System.out.println("The location is NOT a match for "+ map.toString());
+			System.out.println("The location is NOT a match for " + map.toString());
 	}
 }

@@ -16,12 +16,9 @@ import java.util.Random;
 
 import javax.crypto.Mac;
 
-
-
-
 /**
  * @author parth
- *
+ * 
  */
 public class MulticastLayer {
 
@@ -32,13 +29,13 @@ public class MulticastLayer {
 	HashMap<Integer, HashSet<String>> replyBuckets;
 	public boolean DEBUG;
 	private SQLiteJDBC db;
-	
-	//TODO the sequence number can clash 
-	
-	
+
+	// TODO the sequence number can clash
+
 	Random rndNumbers;
 	private HashMap<String, Integer> requestMap;
-	//TODO the size of the hash map needs to be limited
+
+	// TODO the size of the hash map needs to be limited
 	public MulticastLayer() {
 		rndNumbers = new Random(System.currentTimeMillis());
 		replyBuckets = new HashMap<Integer, HashSet<String>>();
@@ -53,17 +50,19 @@ public class MulticastLayer {
 
 	private void setMaxRetries() {
 		// read from file and set the initial value of the retries
-		// TODO 
+		// TODO
 		MAX_RETRIES = db.query().size();
-		if(MAX_RETRIES < 6)
+		if (MAX_RETRIES < 6)
 			MAX_RETRIES = 6;
 	}
 
 	/**
-	 * public method to send a "Message" to all the devices that are to be 
-	 * addressed by the same receive message by them implementing an onReceive 
-	 * method. This is a blocking call and will take a considerable amount of time to complete. 
-	 * Time could vary according to the timeout and the retries used. 
+	 * public method to send a "Message" to all the devices that are to be
+	 * addressed by the same receive message by them implementing an onReceive
+	 * method. This is a blocking call and will take a considerable amount of
+	 * time to complete. Time could vary according to the timeout and the
+	 * retries used.
+	 * 
 	 * @param MAX_RETRIES
 	 * @param TIMEOUT
 	 * @param Message
@@ -73,32 +72,32 @@ public class MulticastLayer {
 		new Thread(new Sender(Message)).start();
 	}
 
-	
 	private class Sender implements Runnable {
 
 		String Message;
 		int threadSeqNum;
+
 		public Sender(String Message) {
 			threadSeqNum = rndNumbers.nextInt();
 			this.Message = Message;
 		}
-		
+
 		@Override
 		public void run() {
-		
+
 			int retries = 0;
 			System.out.println("Starting Multicast");
 			HashSet<String> set = new HashSet<String>();
 			synchronized (replyBuckets) {
 				replyBuckets.put(threadSeqNum, set);
-				if(DEBUG)System.out.println(replyBuckets.toString());
+				if (DEBUG)
+					System.out.println(replyBuckets.toString());
 			}
-			
 
-			while(retries < MAX_RETRIES)
-			{
-				if (!sendPacket("REQ:"+threadSeqNum+":"+Message))
-					if(DEBUG)System.out.println("Couldnot send packet");
+			while (retries < MAX_RETRIES) {
+				if (!sendPacket("REQ:" + threadSeqNum + ":" + Message))
+					if (DEBUG)
+						System.out.println("Couldnot send packet");
 				try {
 					Thread.sleep(TIMEOUT);
 				} catch (InterruptedException e) {
@@ -107,40 +106,45 @@ public class MulticastLayer {
 				retries++;
 
 			}
-			
+
 			HashSet<String> ret;
 			synchronized (replyBuckets) {
 				ret = replyBuckets.get(threadSeqNum);
 				replyBuckets.remove(threadSeqNum);
-				if(DEBUG)System.out.println("Removing entry for send:" + threadSeqNum);
+				if (DEBUG)
+					System.out.println("Removing entry for send:"
+							+ threadSeqNum);
 			}
-			
+
 			HashSet<String> prevDevices = db.query();
-			if(DEBUG)System.out.println("Prev Devices: "+prevDevices.toString());
+			if (DEBUG)
+				System.out.println("Prev Devices: " + prevDevices.toString());
 			Iterator<String> itr = ret.iterator();
-			
-			while(itr.hasNext())
-			{
+
+			while (itr.hasNext()) {
 				String macAddress = itr.next();
-				if(!prevDevices.contains(macAddress))
-				{
-					if(DEBUG)System.out.println("Inserting "+macAddress);
-						db.insert(macAddress);
+				if (!prevDevices.contains(macAddress)) {
+					if (DEBUG)
+						System.out.println("Inserting " + macAddress);
+					db.insert(macAddress);
 				}
 			}
-			
+
 			MAX_RETRIES = db.query().size();
-			if(MAX_RETRIES < 6)
+			if (MAX_RETRIES < 6)
 				MAX_RETRIES = 6;
-			
-			if(DEBUG)System.out.println("The ACKS are: "+ret.toString());
-			if(DEBUG)System.out.println("The MAX_RETRIES is set to:"+MAX_RETRIES);
+
+			if (DEBUG)
+				System.out.println("The ACKS are: " + ret.toString());
+			if (DEBUG)
+				System.out.println("The MAX_RETRIES is set to:" + MAX_RETRIES);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Private method to send a packet on broadcast address
+	 * 
 	 * @param sentence
 	 * @return
 	 */
@@ -151,8 +155,10 @@ public class MulticastLayer {
 			byte[] sendData = sentence.getBytes();
 			DatagramPacket sendPacket = new DatagramPacket(sendData,
 					sendData.length, IPAddress, 9876);
-			if(DEBUG)System.out.println("Send " + sentence + " to"
-					+ sendPacket.getAddress().getHostAddress() + ":" + sendPacket.getPort());
+			if (DEBUG)
+				System.out.println("Send " + sentence + " to"
+						+ sendPacket.getAddress().getHostAddress() + ":"
+						+ sendPacket.getPort());
 			DatagramSocket sendSocket;
 
 			sendSocket = new DatagramSocket();
@@ -171,18 +177,22 @@ public class MulticastLayer {
 	}
 
 	/**
-	 * This method sends packet to a specific address
-	 * the is given in the argument. 
+	 * This method sends packet to a specific address the is given in the
+	 * argument.
+	 * 
 	 * @param sentence
 	 * @param IPAddress
 	 * @return
 	 */
-	private boolean sendPacket(String sentence, InetAddress IPAddress)
-	{
+	private boolean sendPacket(String sentence, InetAddress IPAddress) {
 		try {
 			byte[] sendData = sentence.getBytes();
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
-			if(DEBUG)System.out.println("Send "+sentence + " to" +sendPacket.getAddress().getHostAddress()+ ":"+sendPacket.getPort());
+			DatagramPacket sendPacket = new DatagramPacket(sendData,
+					sendData.length, IPAddress, 9876);
+			if (DEBUG)
+				System.out.println("Send " + sentence + " to"
+						+ sendPacket.getAddress().getHostAddress() + ":"
+						+ sendPacket.getPort());
 			DatagramSocket sendSocket;
 
 			sendSocket = new DatagramSocket();
@@ -199,25 +209,28 @@ public class MulticastLayer {
 	}
 
 	private List<MulticastReceive> _listeners = new ArrayList<MulticastReceive>();
-	public synchronized void addEventListener(MulticastReceive listener)  {
+
+	public synchronized void addEventListener(MulticastReceive listener) {
 		_listeners.add(listener);
 	}
-	public synchronized void removeEventListener(MulticastReceive listener)   {
+
+	public synchronized void removeEventListener(MulticastReceive listener) {
 		_listeners.remove(listener);
 	}
 
 	// call this method whenever you want to notify
-	//the event listeners of the particular event
+	// the event listeners of the particular event
 	private void fireEvent(String message) {
-		RecvMessageEvent event = new RecvMessageEvent(this,message);
-		if(DEBUG) System.out.println("In Fire event list size:"+_listeners.size());
+		RecvMessageEvent event = new RecvMessageEvent(this, message);
+		if (DEBUG)
+			System.out.println("In Fire event list size:" + _listeners.size());
 		Iterator<MulticastReceive> i = _listeners.iterator();
-		while(i.hasNext())  {
-			if(DEBUG) System.out.println("In Fire event loop");
+		while (i.hasNext()) {
+			if (DEBUG)
+				System.out.println("In Fire event loop");
 			((MulticastReceive) i.next()).onReceiveMessage(event);
 		}
 	}
-
 
 	public String getCurrentEnvironmentNetworkIp() {
 		if (currentHostIpAddress == null) {
@@ -236,11 +249,10 @@ public class MulticastLayer {
 							currentHostIpAddress = addr.getHostAddress();
 							byte[] mac = ni.getHardwareAddress();
 
-
-
 							StringBuilder sb = new StringBuilder();
 							for (int i = 0; i < mac.length; i++) {
-								sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
+								sb.append(String.format("%02X%s", mac[i],
+										(i < mac.length - 1) ? "-" : ""));
 							}
 							deviceID = sb.toString();
 							break;
@@ -260,13 +272,12 @@ public class MulticastLayer {
 	}
 
 	/**
-	 * This is the thread that receives packets all the time
-	 * any other thread will communicate with this thread using
-	 * the hashmap of reply buckets by adding in a sequence number
-	 * and a hashset to store the replies in.
-	 * any 
+	 * This is the thread that receives packets all the time any other thread
+	 * will communicate with this thread using the hashmap of reply buckets by
+	 * adding in a sequence number and a hashset to store the replies in. any
+	 * 
 	 * @author parth
-	 *
+	 * 
 	 */
 	private class RecvThread implements Runnable {
 
@@ -278,67 +289,71 @@ public class MulticastLayer {
 
 				socket = new DatagramSocket(9876);
 
-
 				DatagramPacket receivePacket = new DatagramPacket(receiveData,
 						receiveData.length);
-				if(DEBUG)System.out.println("Listening on :" + currentHostIpAddress
-						+ ":9876");
-				while(true)
-				{
+				if (DEBUG)
+					System.out.println("Listening on :" + currentHostIpAddress
+							+ ":9876");
+				while (true) {
 					socket.receive(receivePacket);
 
 					// print out the message
-					String receiveMsg = new String(receivePacket.getData(),0,receivePacket.getLength());
+					String receiveMsg = new String(receivePacket.getData(), 0,
+							receivePacket.getLength());
 					InetAddress IPAddress = receivePacket.getAddress();
 					int port = receivePacket.getPort();
 
-					if(IPAddress.getHostAddress().equals(currentHostIpAddress))					
+					if (IPAddress.getHostAddress().equals(currentHostIpAddress))
 						continue;
 
-					if(DEBUG)System.out.println("RECEIVED: "+receiveMsg+" IP:"+ IPAddress.getHostAddress() + ":" + port );
+					if (DEBUG)
+						System.out.println("RECEIVED: " + receiveMsg + " IP:"
+								+ IPAddress.getHostAddress() + ":" + port);
 
 					String[] headers = receiveMsg.split(":");
-					// if message has REQ then call upper layer listner and get the reply message.
-					if(headers[0].equals("REQ"))
-					{
-						// get reply message from upper layer if you do not have one. 
-						String seqNumIpAdd = headers[1] + IPAddress.getHostAddress();
-						if(!requestMap.containsKey(seqNumIpAdd))
-						{
-							if(DEBUG)System.out.println("Reply is not cached");
+					// if message has REQ then call upper layer listner and get
+					// the reply message.
+					if (headers[0].equals("REQ")) {
+						// get reply message from upper layer if you do not have
+						// one.
+						String seqNumIpAdd = headers[1]
+								+ IPAddress.getHostAddress();
+						if (!requestMap.containsKey(seqNumIpAdd)) {
+							if (DEBUG)
+								System.out.println("Reply is not cached");
 							fireEvent(headers[2]);
 							requestMap.put(seqNumIpAdd, 1);
-							
-						}
-						else 
-							if(DEBUG)System.out.println("Reply is cached so do not bother upper layer");
-						
-						sendPacket("&REP:"+headers[1]+":"+deviceID,IPAddress);
-						
+
+						} else if (DEBUG)
+							System.out
+									.println("Reply is cached so do not bother upper layer");
+
+						sendPacket("&REP:" + headers[1] + ":" + deviceID,
+								IPAddress);
+
 					}
-					// if message has REP then put in the reply bucket 
-					else if(headers[0].equals("REP"))
-					{
+					// if message has REP then put in the reply bucket
+					else if (headers[0].equals("REP")) {
 						HashSet<String> replyBucket;
 						synchronized (replyBuckets) {
-							replyBucket= replyBuckets.get(Integer.parseInt(headers[1]));
-							if(DEBUG)System.out.println(replyBuckets.toString());
+							replyBucket = replyBuckets.get(Integer
+									.parseInt(headers[1]));
+							if (DEBUG)
+								System.out.println(replyBuckets.toString());
 						}
-						
-						if(replyBucket == null)
+
+						if (replyBucket == null)
 							continue;
 						else
 							replyBucket.add(headers[2]);
 					}
 
-
-
 				}
 			} catch (SocketException e) {
-				
+
 				e.printStackTrace();
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
 			}
 		}

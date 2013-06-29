@@ -7,8 +7,5 @@ public class Service {
 		String serviceid;
 		Set<Action> actions;
 		Set<Trigger> trigger;
-		Property[] properties;
-		
-		
-		
+		Property[] properties;		
 	}
