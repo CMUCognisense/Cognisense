@@ -42,7 +42,8 @@ public class Location extends Property {
 	@Override
 	public boolean match(Map<String,String> queryProperties) {
 		
-		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals("Location"))
+		// if the property name of the object is the same as your property name
+		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals(name))
 			return false;
 		
 		// if the service has this home in the location object then get

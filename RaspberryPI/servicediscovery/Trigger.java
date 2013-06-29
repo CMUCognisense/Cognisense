@@ -5,25 +5,23 @@ import java.lang.reflect.Method;
 public class Trigger {
 
 	Method method;
-	Object parameters;
 	String triggerTag;
 	
+	public Trigger(Method method, String triggerTag) {
+		this.method = method;
+		this.triggerTag = triggerTag;
+	}
 	public Method getMethod() {
 		return method;
 	}
 	public void setMethod(Method method) {
 		this.method = method;
 	}
-	public Object getParameters() {
-		return parameters;
-	}
-	public void setParameters(Object parameters) {
-		this.parameters = parameters;
-	}
-	public String getActionTag() {
+	
+	public String getTriggerTag() {
 		return triggerTag;
 	}
-	public void setActionTag(String actionTag) {
+	public void setTriggerTag(String actionTag) {
 		this.triggerTag = actionTag;
 	}
 }

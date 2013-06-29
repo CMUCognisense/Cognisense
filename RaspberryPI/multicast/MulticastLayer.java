@@ -73,7 +73,6 @@ public class MulticastLayer {
 	public void sendAll(String Message) {
 		new Thread(new Sender(Message)).start();
 	}
-
 	
 	private class Sender implements Runnable {
 
@@ -98,7 +97,7 @@ public class MulticastLayer {
 
 			while(retries < MAX_RETRIES)
 			{
-				if (!sendPacket("REQ:"+threadSeqNum+":"+Message))
+				if (!sendPacket("REQ#"+threadSeqNum+"#"+Message))
 					if(DEBUG)System.out.println("Couldnot send packet");
 				try {
 					Thread.sleep(TIMEOUT);
@@ -298,7 +297,7 @@ public class MulticastLayer {
 
 					if(DEBUG)System.out.println("RECEIVED: "+receiveMsg+" IP:"+ IPAddress.getHostAddress() + ":" + port );
 
-					String[] headers = receiveMsg.split(":");
+					String[] headers = receiveMsg.split("#");
 					// if message has REQ then call upper layer listner and get the reply message.
 					if(headers[0].equals("REQ"))
 					{
@@ -314,7 +313,7 @@ public class MulticastLayer {
 						else 
 							if(DEBUG)System.out.println("Reply is cached so do not bother upper layer");
 						
-						sendPacket("&REP:"+headers[1]+":"+deviceID,IPAddress);
+						sendPacket("REP#"+headers[1]+"#"+deviceID,IPAddress);
 						
 					}
 					// if message has REP then put in the reply bucket 

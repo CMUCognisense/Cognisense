@@ -1,23 +1,32 @@
 
+import java.io.ObjectInputStream.GetField;
+
 import servicediscovery.Application;
+import servicediscovery.Message;
+import servicediscovery.ServiceDiscoveryLayer;
 
 
 public class DoorbellApp extends Application{
 	int countNumOfReplies;
+	String serviceId;
 	
 	 public static void main(String[] args) throws Exception{
 	        DoorbellApp app = new DoorbellApp();
-	        app.registerActionstoServices("onDoorbell",DoorbellApp.class);
-	        app.registerActionstoServices("onLocationFound",DoorbellApp.class);
-	        //app.callMethod(strary);
+	        ServiceDiscoveryLayer sdl = app.getSdl();
+	        app.serviceId = sdl.registerNewService("DoorbellApp");
+	        sdl.addLocation(app.serviceId);
+	        app.registerTriggerstoServices(app.serviceId, "onDoorbell",DoorbellApp.class);
+	        app.registerActionstoServices(app.serviceId, "onLocationFound",DoorbellApp.class);
+	        
+	        Message message = new Message(app.serviceId);
+	        message.addAction("giveInfo");
+	        message.addServiceType("Doorbell");
+	        sdl.sendMessage(message);
 	    }
 
 	 public void onDoorbell(Object parameters) {
 	        // this will print out the message sent by the doorbell.
-	    	String[] msg = (String[])parameters;
-	    	countNumOfReplies++;
-	    	System.out.println("The number of replies is " + countNumOfReplies);
-	    	System.out.println(msg[0]);
+	    	System.out.println("The properties of the doorbell are :" + (String)parameters);
 	    	
 	        
 	    }

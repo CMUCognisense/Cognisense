@@ -3,8 +3,11 @@ package servicediscovery;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import multicast.MulticastLayer;
@@ -15,88 +18,158 @@ import multicast.RecvMessageEvent;
 public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	MulticastLayer multicastLayer = null;
-	Set<Service> services;
-	ArrayList<Method> methods = new ArrayList<Method>();
+	// the serviceid  and the service objects
+	Map<String,Service> services;
+	//ArrayList<Method> methods = new ArrayList<Method>();
 	Application appObject = null;
 	boolean DEBUG = false;
-	
+	private int idcounter;
+
 	public ServiceDiscoveryLayer(boolean bool) {
 		multicastLayer = new MulticastLayer();
 		multicastLayer.DEBUG = bool;
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
-		services = new HashSet<Service>(2);
+		services = new HashMap<String,Service>(2);
+		idcounter=0;
 	}
-	
+
 	/**
 	 * this method will add a service to the service set of the SDL
 	 * It will perform all the checks for a valid service that need to be done. 
 	 * @param service
 	 */
-	public void registerService(Service service) {
-		
+	public String registerNewService(String serviceType) {
+
+		Service service = new Service();
+		service.setServiceType(serviceType);
+		String  serviceId  = getNewServiceId();
+		service.setServiceid(serviceId);
+		services.put(serviceId,service);
+		return serviceId;
+
 	}
-	
 	/**
-	 * this method generates a string from the message object and then passes it to the
-	 * This method also checks if the message is valid for generation or not
-	 * it will throw an excaption is the message is not valid i.e. does not have a trigger 
-	 * or an action or has both. 
+	 * Gives a new service id everytime
+	 * @return
+	 */
+	private String getNewServiceId() {
+		return "12-32-32-32" + idcounter++;
+	}
+
+	/**
+	 * this method generates a string from the message object and then passes it to the multicast layer
 	 * reliable multicast layer. 
 	 * @param message
 	 */
 	public void sendMessage(Message message) {
-		
-		String msg = generateMessage(message);
-		
+
+		String msg = message.generateMessage();
+
 		if(msg!=null)
 			multicastLayer.sendAll(msg);
 		else 
 			throw new IllegalArgumentException("Message is not valid");
 	}
-	
-	/**
-	 * This method parses the message object and generates the message to be put on the wire
-	 * @param message
-	 * @return
-	 */
-	private String generateMessage(Message message) {
 
-		return null;
-	}
-	
-	/**
-	 * This method is used to parse a given message from the reliable multicast layer and 
-	 * convert it to a Message object it is a complement of the generateMessage mesage which 
-	 * does the exact opposite
-	 * @param message
-	 * @return
-	 */
-	private Message parseMessage(String message) {
-		
-		return null;
-	}
-	
 	public void registerApp(Application appObject) {
 		this.appObject = appObject;
 	}
-	
-	public void registerActions(Method method) throws Exception {
-        methods.add(method);
-    }
-	
-	public void callMethod(Object parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        methods.get(0).invoke(appObject, parameters);
+
+	public void registerActions(String serviceID,Method method) throws Exception {
+		Service service = services.get(serviceID);
+		// sets the name and Method of the action
+		Action action = new Action(method,method.getName());
+		service.addAction(action);
 	}
-	
+
+	public void registerTriggers(String serviceID,Method method) throws Exception {
+		Service service = services.get(serviceID);
+		// sets the name and Method of the action
+		Trigger trigger = new Trigger(method,method.getName());
+		service.addTrigger(trigger);
+	}
+
+	public void addProperty(String serviceId, Property property) {
+		Service service = services.get(serviceId);
+		if(property.name == null)
+			property.name = property.getClass().getName();
+		service.addProperties(property);
+	}
+
+	public void addLocation(String serviceId) {
+		Service service = services.get(serviceId);
+		Location location = new Location();
+		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
+		service.addProperties(location);
+	}
+
+	public Map<String,Property> getProperties(String serviceId) {
+		return services.get(serviceId).getProperties();
+	}
+
+	public List<String> getActions(String serviceId) {
+		Service service = services.get(serviceId);
+		List<String> list = new LinkedList<String>();
+
+		if(service.getActions()!=null)
+		{
+			for(Action action:service.getActions())
+				list.add(action.getActionTag());
+		}
+		return list;
+	}
+
+	public List<String> getTriggers(String serviceId) {
+		Service service = services.get(serviceId);
+		List<String> list = new LinkedList<String>();
+
+		if(service.getTrigger()!=null)
+		{
+			for(Trigger trig:service.getTrigger())
+				list.add(trig.getTriggerTag());
+		}
+		return list;
+	}
+
+	public void callMethod(Object parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		//methods.get(0).invoke(appObject, parameters);
+	}
+
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
 		System.out.println("Message Received: "+e.getMessage());
-		String[] strary = new String[1];
-        strary[0] = e.getMessage();
+		Message message = Message.parseMessage(e.getMessage());
+		String actionName = message.getAction();
+		String triggerName = message.getTriggerName();
 		try {
-			callMethod(strary);
+			if(actionName!=null)
+			{
+				for(Service service: services.values())
+				{
+					for(Action action:service.getActions())
+					{
+						//TODO this has to be generic as i do not know what argument to give.
+						// at the same time the service requires the message object to get the 
+						// service src id and the action and the trigger data. 
+						action.getMethod().invoke(appObject, message.getSrcServiceID());
+					}
+				}
+			}
+			else if(triggerName!=null)
+			{
+				for(Service service: services.values())
+				{
+					for(Trigger trigger:service.getTrigger())
+					{
+						//TODO this has to be generic as i do not know what argument to give.
+						// at the same time the service requires the message object to get the 
+						// service src id and the action and the trigger data. 
+						trigger.getMethod().invoke(appObject, message.getTriggerData());
+					}
+				}
+			}
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -107,7 +180,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
+
 }
