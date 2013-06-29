@@ -2,13 +2,11 @@ package servicediscovery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
 
 import multicast.MulticastLayer;
 import multicast.MulticastReceive;
@@ -53,9 +51,12 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	/**
 	 * Gives a new service id everytime
 	 * @return
-	 */
-	private String getNewServiceId() {
-		return "12-32-32-32" + idcounter++;
+	 */	
+	public String getNewServiceId() {
+		
+		UUID a = UUID.randomUUID();
+		String message =  "" + a;
+		return message;
 	}
 
 	/**
