@@ -100,6 +100,9 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	public void addLocation(String serviceId) {
 		Service service = services.get(serviceId);
+		Location location = new Location();
+		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
+		service.addProperties(location);
 	}
 
 	public Map<String,Property> getProperties(String serviceId) {
