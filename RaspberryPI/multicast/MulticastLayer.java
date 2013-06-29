@@ -73,7 +73,6 @@ public class MulticastLayer {
 	public void sendAll(String Message) {
 		new Thread(new Sender(Message)).start();
 	}
-
 	
 	private class Sender implements Runnable {
 

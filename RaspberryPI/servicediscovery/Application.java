@@ -9,7 +9,6 @@ public class Application {
 	
     public static void main(String[] args) throws Exception{
         Application app = new Application();
-        app.registerActionstoServices("onDoorbell", Application.class);
         String[] strary = new String[1];
         strary[0] = "Message";
         app.callMethod(strary);
@@ -24,10 +23,19 @@ public class Application {
     	sdl.registerApp(this);
     }
     
-    public void registerActionstoServices(String methodName, Class class1) throws Exception {
+    public void registerActionstoServices(String serviceId, String methodName, Class class1) throws Exception {
         Method method1 = class1.getMethod(methodName, Object.class);
-    	sdl.registerActions(method1);
+    	sdl.registerActions(serviceId, method1);
     }
+
+    public void registerTriggerstoServices(String serviceId, String methodName, Class class1) throws Exception {
+        Method method1 = class1.getMethod(methodName, Object.class);
+    	sdl.registerTriggers(serviceId, method1);
+    }
+    
+	public ServiceDiscoveryLayer getSdl() {
+		return sdl;
+	}
     
     
 

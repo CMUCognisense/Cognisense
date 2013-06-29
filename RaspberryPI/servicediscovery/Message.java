@@ -1,7 +1,12 @@
 package servicediscovery;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import com.google.gson.Gson;
+
 
 /**
  * Message Format of service Discovery Layer:
@@ -23,30 +28,188 @@ import java.util.List;
  */
 
 public class Message {
-	private String serviceID;
-	private List<String> serviceType;
-	private List<String> property;
+	private List<String> serviceID;
+	private List<String> serviceTypes;
+	private Map<String,Map<String,String>> properties;
 	private String action;
-	private String trigger;
+	private String actionInput;
+	private String triggerName;
+	private String triggerData;
 	private String srcServiceID;
 	
 	
-	public Message(Service service) {
-		serviceType = new LinkedList<String>();
-		property = new LinkedList<String>();
-		srcServiceID = service.getServiceid();
+	public Message(String serviceId) {
+		serviceTypes = new LinkedList<String>();
+		properties = new HashMap<String, Map<String,String>>();
+		srcServiceID = serviceId;
+	}
+	
+	public Message() {
+		serviceTypes = new LinkedList<String>();
+		properties = new HashMap<String, Map<String,String>>();
 	}
 	
 	/**
-	 * this method generated a message from the given message object that is to be sent
-	 * by the service discovery layer. The service discovery object calls this method
+	 * this will return a set of all the property names of 
+	 * the properties in the particular message
+	 * @return
+	 */
+	public Set<String> getProperties() {
+		return properties.keySet();
+	}
+	
+	/**
+	 * this return the property attributes that directly go as input to the match function for 
+	 * a particular property
+	 * @param propertyName
+	 * @return
+	 */
+	public Map<String,String> getPropertyAttributes(String propertyName) {
+		return properties.get(propertyName);
+	}
+
+	/**
+	 * add a property to the propertyName
+	 * @param propertyName
+	 */
+	public void addProperty(String propertyName) {
+		HashMap<String,String> map = new HashMap<String,String>();
+		map.put("PROPERTYNAME", propertyName);
+		properties.put(propertyName, map);
+	}
+	
+	/**
+	 * adds the property value for the specified the propertyName
+	 * @param propertyName
+	 * @param propertyField
+	 * @param propertyValue
+	 */
+	public void addPropertyValue(String propertyName, String propertyField, String propertyValue) {
+		
+		HashMap<String,String> propertyValues = (HashMap<String, String>) properties.get(propertyName);
+		if(propertyValues == null)
+			throw new IllegalArgumentException("No such property");
+		
+		propertyValues.put(propertyField, propertyValue);
+		
+	}
+	
+	public void addServiceType(String serviceType) {
+		serviceTypes.add(serviceType);
+	}
+	
+	public void addAction(String action) {
+		this.action = action;
+	}
+	
+	public void addAction(String action, String actionInput) {
+		this.action = action;
+		this.actionInput = actionInput;
+	}
+	
+	public void addTrigger(String triggerName) {
+		this.triggerName = triggerName;
+	}
+	
+	public void addTrigger(String triggerName, String triggerData) {
+		this.triggerName = triggerName;
+		this.triggerData = triggerData;
+	}
+
+	public List<String> getServiceID() {
+		return serviceID;
+	}
+
+	public void setServiceID(List<String> serviceID) {
+		this.serviceID = serviceID;
+	}
+
+	public List<String> getServiceTypes() {
+		return serviceTypes;
+	}
+
+	public void setServiceTypes(List<String> serviceTypes) {
+		this.serviceTypes = serviceTypes;
+	}
+
+	public String getSrcServiceID() {
+		return srcServiceID;
+	}
+
+	public void setSrcServiceID(String srcServiceID) {
+		this.srcServiceID = srcServiceID;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public String getActionInput() {
+		return actionInput;
+	}
+
+	public String getTriggerName() {
+		return triggerName;
+	}
+
+	public String getTriggerData() {
+		return triggerData;
+	}
+	
+	/**
+	 * This method parses the message object and generates the message to be put on the wire
+	 * This method also checks if the message is valid for generation or not
+	 * it will throw an exception is the message is not valid i.e. does not have a trigger 
+	 * or an action or has both. 
 	 * @return
 	 */
 	public String generateMessage() {
+		if(action==null && triggerName==null || action !=null && triggerName!=null)
+			return null;
+
+		if(srcServiceID==null)
+			return null;
 		
+		Gson gson = new Gson();
+		String json = gson.toJson(this);
+		return json;
+	}
+	/**
+	 *  This method is used to parse a given message from the reliable multicast layer and 
+	 * convert it to a Message object it is a complement of the generateMessage mesage which 
+	 * does the exact opposite
+	 * @param json
+	 * @return
+	 */
+	public static Message parseMessage(String json) {
+		Gson gson = new Gson();
+		Message message = gson.fromJson(json,Message.class);
+		return message;
+	}
+	
+
+	public static void main(String[] args) {
+		Message message = new Message();
+		List<String> serviceId = new LinkedList<String>();
+		serviceId.add("12-32-32-12-asd");
+		message.setServiceID(serviceId);
 		
+		List<String> serviceType = new LinkedList<String>();
+		serviceType.add("Speaker");
+		message.setServiceID(serviceType);
 		
-		return null;
+		List<String> actionName = new LinkedList<String>();
+		actionName.add("StartListening");
+		message.setServiceID(actionName);
+		
+		message.addProperty("Volume");
+		message.addPropertyValue("Volume", "level", "120");
+		
+		message.addProperty("Location");
+		message.addPropertyValue("Location", "room", "bedroom");
+		message.addPropertyValue("Location", "usertag", "nearwindow");
+			
+		
 	}
 	
 }
