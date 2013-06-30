@@ -208,14 +208,27 @@ public class MulticastLayer {
 
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
-	private void fireEvent(String message) {
-		RecvMessageEvent event = new RecvMessageEvent(this,message);
-		if(DEBUG) System.out.println("In Fire event list size:"+_listeners.size());
-		Iterator<MulticastReceive> i = _listeners.iterator();
-		while(i.hasNext())  {
-			if(DEBUG) System.out.println("In Fire event loop");
-			((MulticastReceive) i.next()).onReceiveMessage(event);
+	private class FireEvent implements Runnable {
+
+		String message;
+		
+		public FireEvent(String message) {
+			this.message = message;
 		}
+		
+		@Override
+		public void run() {
+			
+			RecvMessageEvent event = new RecvMessageEvent(this,message);
+			if(DEBUG) System.out.println("In Fire event list size:"+_listeners.size());
+			Iterator<MulticastReceive> i = _listeners.iterator();
+			while(i.hasNext())  {
+				if(DEBUG) System.out.println("In Fire event loop");
+				((MulticastReceive) i.next()).onReceiveMessage(event);
+			}
+			
+		}
+		
 	}
 
 
@@ -306,7 +319,7 @@ public class MulticastLayer {
 						if(!requestMap.containsKey(seqNumIpAdd))
 						{
 							if(DEBUG)System.out.println("Reply is not cached");
-							fireEvent(headers[2]);
+							new Thread(new FireEvent(headers[2])).start();
 							requestMap.put(seqNumIpAdd, 1);
 							
 						}
