@@ -21,7 +21,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	//ArrayList<Method> methods = new ArrayList<Method>();
 	Application appObject = null;
 	boolean DEBUG = false;
-	private int idcounter;
 
 	public ServiceDiscoveryLayer(boolean bool) {
 		multicastLayer = new MulticastLayer();
@@ -30,7 +29,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
 		services = new HashMap<String,Service>(2);
-		idcounter=0;
 	}
 
 	/**
