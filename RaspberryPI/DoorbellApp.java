@@ -24,9 +24,9 @@ public class DoorbellApp extends Application{
 	        sdl.sendMessage(message);
 	    }
 
-	 public void onDoorbell(Object parameters) {
+	 public void onDoorbell(Object triggerData, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
-	    	System.out.println("The properties of the doorbell are :" + (String)parameters);
+	    	System.out.println("The properties of the doorbell are :" + (String)triggerData +" SrcServiceID:"+ (String)srcServiceId);
 	    	
 	        
 	    }
