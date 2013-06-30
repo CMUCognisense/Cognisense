@@ -24,7 +24,7 @@ public class Doorbell extends Application{
 	        
 	        Message message = new Message(serviceId);
 	        message.addTrigger("onDoorbell", location+":"+trigger);
-	        message.addServiceType((String)srcServiceId);
+	        message.addServiceId((String)srcServiceId);
 	    	
 	        sdl.sendMessage(message);
 	        
