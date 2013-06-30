@@ -14,7 +14,7 @@ public class DoorbellApp extends Application{
 	        DoorbellApp app = new DoorbellApp();
 	        ServiceDiscoveryLayer sdl = app.getSdl();
 	        app.serviceId = sdl.registerNewService("DoorbellApp");
-	        sdl.addLocation(app.serviceId);
+	        //sdl.addLocation(app.serviceId);
 	        app.registerTriggerstoServices(app.serviceId, "onDoorbell",DoorbellApp.class);
 	        app.registerActionstoServices(app.serviceId, "onLocationFound",DoorbellApp.class);
 	        

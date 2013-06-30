@@ -88,7 +88,7 @@ public class Message {
 		
 		HashMap<String,String> propertyValues = (HashMap<String, String>) properties.get(propertyName);
 		if(propertyValues == null)
-			throw new IllegalArgumentException("No such property");
+			throw new IllegalArgumentException("No such property"); 
 		
 		propertyValues.put(propertyField, propertyValue);
 		

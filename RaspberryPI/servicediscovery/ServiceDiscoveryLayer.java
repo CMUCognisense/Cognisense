@@ -27,7 +27,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	public ServiceDiscoveryLayer(boolean bool) {
 		multicastLayer = new MulticastLayer();
-		multicastLayer.DEBUG = bool;
+		multicastLayer.DEBUG = false;
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
@@ -98,10 +98,16 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		service.addProperties(property);
 	}
 
-	public void addLocation(String serviceId) {
+	public void addLocation(String serviceId, Map<String, String> location1) {
 		Service service = services.get(serviceId);
 		Location location = new Location();
-		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
+		String home = location1.get("home");
+		String room = location1.get("room");
+		String floor = location1.get("floor");
+		String inRoom = location1.get("inRoom");
+		String userTag = location1.get("userTag");
+		
+		location.addLocation(home,floor,room,inRoom,userTag);
 		service.addProperties(location);
 	}
 
