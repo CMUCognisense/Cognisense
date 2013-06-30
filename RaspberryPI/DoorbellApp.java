@@ -16,7 +16,6 @@ public class DoorbellApp extends Application{
 	        app.serviceId = sdl.registerNewService("DoorbellApp");
 	        sdl.addLocation(app.serviceId);
 	        app.registerTriggerstoServices(app.serviceId, "onDoorbell",DoorbellApp.class);
-	        app.registerActionstoServices(app.serviceId, "onLocationFound",DoorbellApp.class);
 	        
 	        Message message = new Message(app.serviceId);
 	        message.addAction("giveInfo");
@@ -24,15 +23,10 @@ public class DoorbellApp extends Application{
 	        sdl.sendMessage(message);
 	    }
 
-	 public void onDoorbell(Object parameters) {
+	 public void onDoorbell(Object triggerData, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
-	    	System.out.println("The properties of the doorbell are :" + (String)parameters);
+	    	System.out.println("The properties of the doorbell are :" + (String)triggerData +" SrcServiceID:"+ (String)srcServiceId);
 	    	
 	        
-	    }
-	 
-	 public void onLocationFound(Object parameters) {
-		 countNumOfReplies++;
-	 }
-	 
+	    }	 
 }

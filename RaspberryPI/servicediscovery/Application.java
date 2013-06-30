@@ -24,12 +24,12 @@ public class Application {
     }
     
     public void registerActionstoServices(String serviceId, String methodName, Class class1) throws Exception {
-        Method method1 = class1.getMethod(methodName, Object.class);
+        Method method1 = class1.getMethod(methodName, Object.class, Object.class);
     	sdl.registerActions(serviceId, method1);
     }
 
     public void registerTriggerstoServices(String serviceId, String methodName, Class class1) throws Exception {
-        Method method1 = class1.getMethod(methodName, Object.class);
+        Method method1 = class1.getMethod(methodName, Object.class, Object.class);
     	sdl.registerTriggers(serviceId, method1);
     }
     
