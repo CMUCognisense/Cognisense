@@ -10,15 +10,15 @@ public class Doorbell {
 	        sdl = new ServiceDiscoveryLayer(true);
 	        sdl.registerApp(new Doorbell());
 	        serviceId = sdl.registerNewService("Doorbell");
-	        sdl.addLocation(serviceId);
-	        sdl.registerActions(serviceId, "giveInfo", Doorbell.class);
+	        sdl.addLocation();
+	        sdl.registerActions("giveInfo", Doorbell.class);
 	        
 	    }
 
 	 public void giveInfo(Object actionInput, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
-	        String location = sdl.getProperties(serviceId).get("Location").toString();
-	        String trigger = sdl.getActions(serviceId).toString();
+	        String location = sdl.getProperties().get("Location").toString();
+	        String trigger = sdl.getActions().toString();
 	        
 	        Message message = new Message(serviceId);
 	        message.addTrigger("onDoorbell", location+":"+trigger);

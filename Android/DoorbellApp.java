@@ -13,8 +13,8 @@ public class DoorbellApp {
 		 	sdl = new ServiceDiscoveryLayer(true);
 		 	sdl.registerApp(new DoorbellApp());
 		 	serviceId = sdl.registerNewService("DoorbellApp");
-	        sdl.addLocation(serviceId);
-	        sdl.registerTriggers(serviceId, "onDoorbell", DoorbellApp.class);
+	        sdl.addLocation();
+	        sdl.registerTriggers("onDoorbell", DoorbellApp.class);
 	        
 	        Message message = new Message(serviceId);
 	        message.addAction("giveInfo");

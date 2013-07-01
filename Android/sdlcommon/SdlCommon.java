@@ -1,4 +1,4 @@
-package servicediscovery;
+package sdlcommon;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,12 +8,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import servicediscovery.Action;
+import servicediscovery.Location;
+import servicediscovery.Message;
+import servicediscovery.Property;
+import servicediscovery.Service;
+import servicediscovery.Trigger;
+
 import multicast.MulticastLayer;
 import multicast.MulticastReceive;
 import multicast.RecvMessageEvent;
 
 
-public class ServiceDiscoveryLayer implements MulticastReceive {
+public class SdlCommon implements MulticastReceive {
 
 	MulticastLayer multicastLayer = null;
 	// the serviceid  and the service objects
@@ -21,14 +28,16 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	//ArrayList<Method> methods = new ArrayList<Method>();
 	Object appObject = null;
 	boolean DEBUG = false;
+	private int idcounter;
 
-	public ServiceDiscoveryLayer(boolean bool) {
+	public SdlCommon(boolean bool) {
 		multicastLayer = new MulticastLayer();
 		multicastLayer.DEBUG = bool;
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
 		services = new HashMap<String,Service>(2);
+		idcounter=0;
 	}
 
 	/**
@@ -72,25 +81,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			throw new IllegalArgumentException("Message is not valid");
 	}
 
-	public void registerApp(Object appObject) {
-		this.appObject = appObject;
-	}
-
-	public void registerActions(String serviceID, String methodName, Class appClass) throws Exception {
-		Service service = services.get(serviceID);
-		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
-		// sets the name and Method of the action
-		Action action = new Action(appMethod,appMethod.getName());
-		service.addAction(action);
-	}
-
-	public void registerTriggers(String serviceID, String methodName, Class appClass) throws Exception {
-		Service service = services.get(serviceID);
-		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
-		// sets the name and Method of the trigger
-		Trigger trigger = new Trigger(appMethod,appMethod.getName());
-		service.addTrigger(trigger);
-	}
+	
 
 	public void addProperty(String serviceId, Property property) {
 		Service service = services.get(serviceId);
@@ -134,62 +125,14 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		return list;
 	}
 
-	
-	/**
-	 * this is a test method for the matching scheme for jiahan
-	 * This method should print out the method names to be called and the services they should be called on
-	 * Looking at the message object
-	 * @param message
-	 */
-	public void testOnReceiveMessage(Message message) {
-		String actionName = message.getAction();
-		String triggerName = message.getTriggerName();
-		try {
-			if(actionName!=null)
-			{
-				for(Service service: services.values())
-				{
-					for(Action action:service.getActions())
-					{
-						//TODO this has to be generic as i do not know what argument to give.
-						// at the same time the service requires the message object to get the 
-						// service src id and the action and the trigger data. 
-						action.getMethod().invoke(appObject, message.getActionInput(),message.getSrcServiceID());
-					}
-				}
-			}
-			else if(triggerName!=null)
-			{
-				for(Service service: services.values())
-				{
-					for(Trigger trigger:service.getTrigger())
-					{
-						//TODO this has to be generic as i do not know what argument to give.
-						// at the same time the service requires the message object to get the 
-						// service src id and the action and the trigger data. 
-						trigger.getMethod().invoke(appObject, message.getTriggerData(), message.getSrcServiceID());
-					}
-				}
-			}
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-	}
-	
+
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
 		System.out.println("Message Received: "+e.getMessage());
 		Message message = Message.parseMessage(e.getMessage());
 		String actionName = message.getAction();
 		String triggerName = message.getTriggerName();
+		//TODO this has to be an intent to the particular service. 
 		try {
 			if(actionName!=null)
 			{
@@ -228,12 +171,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			e1.printStackTrace();
 		}
 
-	}
-	
-	public static void main(String args[]) {
-		ServiceDiscoveryLayer sdl = new ServiceDiscoveryLayer(true);
-		
-		
 	}
 
 }
