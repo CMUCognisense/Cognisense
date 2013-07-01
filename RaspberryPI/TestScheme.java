@@ -25,13 +25,13 @@ public class TestScheme {
 		
         Message message = new Message(serviceId);
         message.addAction("giveInfo","input");
-//        message.addServiceType("Test");
+        message.addServiceType("Test");
 		
 		sdl.testOnReceiveMessage(message);
 
 		message = new Message(serviceId);
         message.addAction("getInfo","input");
-//        message.addServiceType("Test");
+        message.addServiceType("Test");
 		
 		sdl.testOnReceiveMessage(message);
 
