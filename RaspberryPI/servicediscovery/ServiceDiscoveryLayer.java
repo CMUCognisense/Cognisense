@@ -19,7 +19,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	// the serviceid  and the service objects
 	Map<String,Service> services;
 	//ArrayList<Method> methods = new ArrayList<Method>();
-	Application appObject = null;
+	Object appObject = null;
 	boolean DEBUG = false;
 	private int idcounter;
 
@@ -74,21 +74,23 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			throw new IllegalArgumentException("Message is not valid");
 	}
 
-	public void registerApp(Application appObject) {
+	public void registerApp(Object appObject) {
 		this.appObject = appObject;
 	}
 
-	public void registerActions(String serviceID,Method method) throws Exception {
+	public void registerActions(String serviceID, String methodName, Class appClass) throws Exception {
 		Service service = services.get(serviceID);
+		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
 		// sets the name and Method of the action
-		Action action = new Action(method,method.getName());
+		Action action = new Action(appMethod,appMethod.getName());
 		service.addAction(action);
 	}
 
-	public void registerTriggers(String serviceID,Method method) throws Exception {
+	public void registerTriggers(String serviceID, String methodName, Class appClass) throws Exception {
 		Service service = services.get(serviceID);
-		// sets the name and Method of the action
-		Trigger trigger = new Trigger(method,method.getName());
+		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
+		// sets the name and Method of the trigger
+		Trigger trigger = new Trigger(appMethod,appMethod.getName());
 		service.addTrigger(trigger);
 	}
 

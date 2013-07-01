@@ -5,7 +5,7 @@ import servicediscovery.ServiceDiscoveryLayer;
 
 public class Doorbell extends Application{
 	int countNumOfReplies;
-	String serviceId;
+	static String serviceId;
 	
 	 public static void main(String[] args) throws Exception{
 	        Doorbell app = new Doorbell();
