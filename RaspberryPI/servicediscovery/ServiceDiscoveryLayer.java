@@ -134,10 +134,18 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		return list;
 	}
 
-	public void callMethod(Object parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		//methods.get(0).invoke(appObject, parameters);
+	
+	/**
+	 * this is a test method for the matching scheme for jiahan
+	 * This method should print out the method names to be called and the services they should be called on
+	 * Looking at the message object
+	 * @param message
+	 */
+	public void testOnReceiveMessage(Message message) {
+		
+		
 	}
-
+	
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
 		System.out.println("Message Received: "+e.getMessage());
@@ -182,6 +190,12 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			e1.printStackTrace();
 		}
 
+	}
+	
+	public static void main(String args[]) {
+		ServiceDiscoveryLayer sdl = new ServiceDiscoveryLayer(true);
+		
+		
 	}
 
 }

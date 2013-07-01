@@ -11,12 +11,7 @@ public class Application {
         Application app = new Application();
         String[] strary = new String[1];
         strary[0] = "Message";
-        app.callMethod(strary);
     }
-
-    public void callMethod(String[] string) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-    	sdl.callMethod(string);
-	}
 
 	public Application() {
     	sdl = new ServiceDiscoveryLayer(true);
