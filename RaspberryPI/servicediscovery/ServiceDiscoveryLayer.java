@@ -144,7 +144,45 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	 * @param message
 	 */
 	public void testOnReceiveMessage(Message message) {
-		
+		String actionName = message.getAction();
+		String triggerName = message.getTriggerName();
+		try {
+			if(actionName!=null)
+			{
+				for(Service service: services.values())
+				{
+					for(Action action:service.getActions())
+					{
+						//TODO this has to be generic as i do not know what argument to give.
+						// at the same time the service requires the message object to get the 
+						// service src id and the action and the trigger data. 
+						action.getMethod().invoke(appObject, message.getActionInput(),message.getSrcServiceID());
+					}
+				}
+			}
+			else if(triggerName!=null)
+			{
+				for(Service service: services.values())
+				{
+					for(Trigger trigger:service.getTrigger())
+					{
+						//TODO this has to be generic as i do not know what argument to give.
+						// at the same time the service requires the message object to get the 
+						// service src id and the action and the trigger data. 
+						trigger.getMethod().invoke(appObject, message.getTriggerData(), message.getSrcServiceID());
+					}
+				}
+			}
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 	}
 	
