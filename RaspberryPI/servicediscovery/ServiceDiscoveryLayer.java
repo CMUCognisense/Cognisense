@@ -160,7 +160,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 				for (Service service : services.values()) {
 					for (String incomingSId : idList) {
 						if (service.getServiceid().equals(incomingSId)) {
-							// System.out.println("AAAA");
 							set.add(service);
 							notNull = true;
 						}
@@ -169,7 +168,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 				for (Service service : services.values()) {
 					for (String type : typeList) {
 						if (service.getServiceType().equals(type)) {
-							// System.out.println("BBBBB");
 							set.add(service);
 							notNull = true;
 						}
@@ -179,7 +177,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 					for (Service service : set) {
 						for (Action action : service.getActions()) {
 							if (action.getActionTag().equals(actionName)) {
-								// System.out.println("CCC");
 								action.getMethod().invoke(appObject,
 										message.getActionInput(),
 										message.getSrcServiceID());
@@ -188,7 +185,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 						}
 					}
 				} else {
-					System.out.println("Here!!");
 					for (Service service : services.values()) {
 						for (Action action : service.getActions()) {
 							if (action.getActionTag().equals(actionName)) {
@@ -200,18 +196,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 					}
 
 				}
-				// for (Service service : services.values()) {
-				// for (Action action : service.getActions()) {
-				// // TODO this has to be generic as i do not know what
-				// // argument to give.
-				// // at the same time the service requires the message
-				// // object to get the
-				// // service src id and the action and the trigger data.
-				// action.getMethod().invoke(appObject,
-				// message.getActionInput(),
-				// message.getSrcServiceID());
-				// }
-				// }
 			} else if (triggerName != null) {
 				Set<Service> set = new HashSet<Service>();
 				boolean notNull = false;
@@ -244,11 +228,10 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 						}
 					}
 				} else {
-					System.out.println("Here!!");
 					for (Service service : services.values()) {
-						for (Action action : service.getActions()) {
-							if (action.getActionTag().equals(actionName)) {
-								action.getMethod().invoke(appObject,
+						for (Trigger trigger : service.getTrigger()) {
+							if (trigger.getTriggerTag().equals(actionName)) {
+								trigger.getMethod().invoke(appObject,
 										message.getActionInput(),
 										message.getSrcServiceID());
 							}
@@ -256,18 +239,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 					}
 
 				}
-				// for (Service service : services.values()) {
-				// for (Trigger trigger : service.getTrigger()) {
-				// // TODO this has to be generic as i do not know what
-				// // argument to give.
-				// // at the same time the service requires the message
-				// // object to get the
-				// // service src id and the action and the trigger data.
-				// trigger.getMethod().invoke(appObject,
-				// message.getTriggerData(),
-				// message.getSrcServiceID());
-				// }
-				// }
 			}
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
