@@ -25,13 +25,13 @@ public class TestScheme {
 		
         Message message = new Message(serviceId);
         message.addAction("giveInfo","input");
-        message.addServiceType("Test");
+//        message.addServiceType("Test");
 		
 		sdl.testOnReceiveMessage(message);
 
 		message = new Message(serviceId);
         message.addAction("getInfo","input");
-        message.addServiceType("Test");
+//        message.addServiceType("Test");
 		
 		sdl.testOnReceiveMessage(message);
 
@@ -43,7 +43,7 @@ public class TestScheme {
 	}
 	
 	public void getInfo(Object actionInput, Object srcServiceId) {
-		System.out.println("GetInfo is called" + (String)actionInput + (String)srcServiceId);
+		System.out.println("GetInfo is called " + (String)actionInput + (String)srcServiceId);
 	}
 	
 }
