@@ -41,10 +41,12 @@ public class Message {
 	public Message(String serviceId) {
 		serviceTypes = new LinkedList<String>();
 		properties = new HashMap<String, Map<String,String>>();
+		serviceID = new LinkedList<String>();
 		srcServiceID = serviceId;
 	}
 	
 	public Message() {
+		serviceID = new LinkedList<String>();
 		serviceTypes = new LinkedList<String>();
 		properties = new HashMap<String, Map<String,String>>();
 	}
@@ -116,12 +118,12 @@ public class Message {
 		this.triggerData = triggerData;
 	}
 
-	public List<String> getServiceID() {
+	public List<String> getServiceIds() {
 		return serviceID;
 	}
 
-	public void setServiceID(List<String> serviceID) {
-		this.serviceID = serviceID;
+	public void addServiceId(String serviceID) {
+		this.serviceID.add(serviceID);
 	}
 
 	public List<String> getServiceTypes() {
@@ -189,18 +191,10 @@ public class Message {
 	
 
 	public static void main(String[] args) {
-		Message message = new Message();
-		List<String> serviceId = new LinkedList<String>();
-		serviceId.add("12-32-32-12-asd");
-		message.setServiceID(serviceId);
-		
-		List<String> serviceType = new LinkedList<String>();
-		serviceType.add("Speaker");
-		message.setServiceID(serviceType);
-		
-		List<String> actionName = new LinkedList<String>();
-		actionName.add("StartListening");
-		message.setServiceID(actionName);
+		Message message = new Message("123");
+		message.addServiceId("12-32-32-12-asd");
+		message.addServiceType("Speaker");
+		message.addAction("startlistening");
 		
 		message.addProperty("Volume");
 		message.addPropertyValue("Volume", "level", "120");
@@ -208,6 +202,8 @@ public class Message {
 		message.addProperty("Location");
 		message.addPropertyValue("Location", "room", "bedroom");
 		message.addPropertyValue("Location", "usertag", "nearwindow");
+		
+		System.out.println(message.generateMessage());
 			
 		
 	}

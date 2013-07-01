@@ -16,7 +16,7 @@ public class Doorbell extends Application{
 	        
 	    }
 
-	 public void giveInfo(Object parameter) {
+	 public void giveInfo(Object actionInput, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
 	        ServiceDiscoveryLayer sdl = getSdl();
 	        String location = sdl.getProperties(serviceId).get("Location").toString();
@@ -24,7 +24,7 @@ public class Doorbell extends Application{
 	        
 	        Message message = new Message(serviceId);
 	        message.addTrigger("onDoorbell", location+":"+trigger);
-	        message.addServiceType((String)parameter);
+	        message.addServiceId((String)srcServiceId);
 	    	
 	        sdl.sendMessage(message);
 	        

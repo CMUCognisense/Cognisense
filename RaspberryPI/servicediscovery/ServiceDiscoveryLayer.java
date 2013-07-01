@@ -152,7 +152,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 						//TODO this has to be generic as i do not know what argument to give.
 						// at the same time the service requires the message object to get the 
 						// service src id and the action and the trigger data. 
-						action.getMethod().invoke(appObject, message.getSrcServiceID());
+						action.getMethod().invoke(appObject, message.getActionInput(),message.getSrcServiceID());
 					}
 				}
 			}
@@ -165,7 +165,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 						//TODO this has to be generic as i do not know what argument to give.
 						// at the same time the service requires the message object to get the 
 						// service src id and the action and the trigger data. 
-						trigger.getMethod().invoke(appObject, message.getTriggerData());
+						trigger.getMethod().invoke(appObject, message.getTriggerData(), message.getSrcServiceID());
 					}
 				}
 			}
