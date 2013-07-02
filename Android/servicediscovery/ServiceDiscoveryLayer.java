@@ -1,26 +1,25 @@
 package servicediscovery;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import multicast.MulticastLayer;
-import multicast.MulticastReceive;
-import multicast.RecvMessageEvent;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 
-public class ServiceDiscoveryLayer extends broadcastReceiver{
-
+public class ServiceDiscoveryLayer{
 	// the serviceid  and the service objects
 	Service service;
 	Object appObject = null;
 	boolean DEBUG = false;
 	private int idcounter;
-
+	private String TAG = "SDL";
+	
 	public ServiceDiscoveryLayer(boolean bool) {
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
@@ -54,14 +53,16 @@ public class ServiceDiscoveryLayer extends broadcastReceiver{
 	 * reliable multicast layer. 
 	 * @param message
 	 */
-	public void sendMessage(Message message) {
+	public void sendMessage(Context context, Message message) {
 		//TODO send intents here
 		String msg = message.generateMessage();
 
-		//if(msg!=null)
-			//multicastLayer.sendAll(msg);
-		//else 
-			//throw new IllegalArgumentException("Message is not valid");
+		// send intent to the android communication process to send the msg
+		Intent i = new Intent("commservice");
+		i.putExtra("command", "SENDALL");
+		i.putExtra("message", msg);
+		Log.e(TAG, "Send msg");
+		context.sendBroadcast(i);
 	}
 
 	public void registerApp(Object appObject) {
@@ -108,6 +109,16 @@ public class ServiceDiscoveryLayer extends broadcastReceiver{
 		}
 		return list;
 	}
+	
+	//get action object using action name
+	public Action getAction(String actionName){
+		for(Action action : service.getActions()){
+			if (action.getActionTag().equals(actionName)) {
+				return action;
+			}
+		}
+		return null;
+	}
 
 	public List<String> getTriggers(String serviceId) {
 		List<String> list = new LinkedList<String>();
@@ -120,6 +131,16 @@ public class ServiceDiscoveryLayer extends broadcastReceiver{
 		return list;
 	}
 
+	// get the trigger object using trigger name
+	public Trigger getTrigger(String triggerName){
+		for(Trigger trigger : service.getTrigger()){
+			if(trigger.getTriggerTag().equals(triggerName)){
+				return trigger;
+			}
+		}
+		return null;
+	}
+	
 	//TODO  this will have an intent receiver which will call methods that are registerd. like the on receive 
 	// of the sdlcommon
 	

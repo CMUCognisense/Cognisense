@@ -1,9 +1,7 @@
 package servicediscovery;
-import java.lang.reflect.Field;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 
 /**
@@ -18,8 +16,8 @@ import java.util.Set;
  * @author parth
  *
  */
-public class Location extends Property {
-
+public class Location extends Property implements Serializable{
+	private static final long serialVersionUID = 1L;
 	Map<String,SubLocation> locations;
 	public boolean DEBUG = true;
 	public Location(){
