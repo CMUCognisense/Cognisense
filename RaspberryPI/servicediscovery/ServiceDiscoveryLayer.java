@@ -19,7 +19,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	MulticastLayer multicastLayer = null;
 	// the serviceid and the service objects
 	Map<String, Service> services;
-	// ArrayList<Method> methods = new ArrayList<Method>();
+
 	Object appObject = null;
 	boolean DEBUG = false;
 

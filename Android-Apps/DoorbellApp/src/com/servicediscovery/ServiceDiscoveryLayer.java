@@ -90,20 +90,24 @@ public class ServiceDiscoveryLayer{
 		this.intentfilter = intentfilter;
 	}
 
-	public void registerActions(String methodName, Class appClass) throws Exception {
-		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
+	public void registerActions(String methodName, String actionName, 
+			Class appClass) throws Exception {
+		Method appMethod = appClass.getMethod(methodName, Object.class,
+				Object.class);
 		// sets the name and Method of the action
-		Action action = new Action(appMethod,appMethod.getName());
+		Action action = new Action(appMethod, actionName!=null?actionName:methodName);
 		service.addAction(action);
 
 		//TODO send intent to the android communication process to update the action for service
 		updateOnCommProc();
 	}
 
-	public void registerTriggers(String methodName, Class appClass) throws Exception {
-		Method appMethod = appClass.getMethod(methodName, Object.class, Object.class);
+	public void registerTriggers(String methodName, String triggerName,
+			Class appClass) throws Exception {
+		Method appMethod = appClass.getMethod(methodName, Object.class,
+				Object.class);
 		// sets the name and Method of the trigger
-		Trigger trigger = new Trigger(appMethod,appMethod.getName());
+		Trigger trigger = new Trigger(appMethod, triggerName!=null?triggerName:methodName);
 		service.addTrigger(trigger);
 		
 		//TODO send intent to the android communication process to update the trigger for service

@@ -23,7 +23,6 @@ public class SdlCommon implements MulticastReceive {
 	Map<String, String> serviceID; 
 	Object appObject = null;
 	boolean DEBUG = false;
-	private int idcounter;
 
 	public SdlCommon(Context context, boolean bool) {
 		multicastLayer = new MulticastLayer(context);
@@ -34,7 +33,6 @@ public class SdlCommon implements MulticastReceive {
 		services = new HashMap<String,Service>(2);
 		intentFilter = new HashMap<String, String>();
 		serviceID = new HashMap<String, String>();
-		idcounter=0;
 	}
 
 	/**
@@ -65,11 +63,12 @@ public class SdlCommon implements MulticastReceive {
 	 * @param message
 	 */
 	public void sendMessage(Message message) {
+
 		String msg = message.generateMessage();
 
-		if(msg!=null)
+		if (msg != null)
 			multicastLayer.sendAll(msg);
-		else 
+		else
 			throw new IllegalArgumentException("Message is not valid");
 	}
 
@@ -104,7 +103,110 @@ public class SdlCommon implements MulticastReceive {
 
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
-		//TODO new logic goes here
+		System.out.println("Message Received: " + e.getMessage());
+		Message message = Message.parseMessage(e.getMessage());
+				String actionName = message.getAction();
+		String triggerName = message.getTriggerName();
+		List<String> idList = message.getServiceIds();
+		List<String> typeList = message.getServiceTypes();
+		try {
+			if (actionName != null) {
+				Set<Service> set = new HashSet<Service>();
+				boolean notNull = false;
+				for (Service service : services.values()) {
+					for (String incomingSId : idList) {
+						if (service.getServiceid().equals(incomingSId)) {
+							set.add(service);
+							notNull = true;
+						}
+					}
+				}
+				for (Service service : services.values()) {
+					for (String type : typeList) {
+						if (service.getServiceType().equals(type)) {
+							set.add(service);
+							notNull = true;
+						}
+					}
+				}
+				if (notNull) {
+					for (Service service : set) {
+						for (Action action : service.getActions()) {
+							if (action.getActionTag().equals(actionName)) {
+								action.getMethod().invoke(appObject,
+										message.getActionInput(),
+										message.getSrcServiceID());
+							}
+
+						}
+					}
+				} else {
+					for (Service service : services.values()) {
+						for (Action action : service.getActions()) {
+							if (action.getActionTag().equals(actionName)) {
+								action.getMethod().invoke(appObject,
+										message.getActionInput(),
+										message.getSrcServiceID());
+							}
+						}
+					}
+
+				}
+			} else if (triggerName != null) {
+				Set<Service> set = new HashSet<Service>();
+				boolean notNull = false;
+				for (Service service : services.values()) {
+					for (String incomingSId : idList) {
+						if (service.getServiceid().equals(incomingSId)) {
+							set.add(service);
+							notNull = true;
+						}
+					}
+				}
+				for (Service service : services.values()) {
+					for (String type : typeList) {
+						if (service.getServiceType().equals(type)) {
+							set.add(service);
+							notNull = true;
+						}
+					}
+				}
+				if (notNull) {
+					for (Service service : set) {
+						for (Trigger trigger : service.getTrigger()) {
+							if (trigger.getTriggerTag().equals(actionName)) {
+
+								trigger.getMethod().invoke(appObject,
+										message.getActionInput(),
+										message.getSrcServiceID());
+							}
+
+						}
+					}
+				} else {
+					for (Service service : services.values()) {
+						for (Trigger trigger : service.getTrigger()) {
+							if (trigger.getTriggerTag().equals(actionName)) {
+								trigger.getMethod().invoke(appObject,
+										message.getActionInput(),
+										message.getSrcServiceID());
+							}
+						}
+					}
+
+				}
+			}
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		
 	}
 
