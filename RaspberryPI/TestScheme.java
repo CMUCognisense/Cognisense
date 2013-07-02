@@ -12,7 +12,7 @@ public class TestScheme {
 		sdl = new ServiceDiscoveryLayer(true);
 		sdl.registerApp(new TestScheme());
 		serviceId = sdl.registerNewService("Test");
-		serviceId2 = sdl.registerNewService("Test1");
+		serviceId2 = sdl.registerNewService("Test2");
 		serviceId3 = sdl.registerNewService("Test3");
 		sdl.addLocation(serviceId);
 		sdl.registerActions(serviceId, "giveInfo", TestScheme.class);
@@ -24,20 +24,28 @@ public class TestScheme {
 		
 		
         Message message = new Message(serviceId);
-        message.addAction("giveInfo","input");
+        message.addAction("giveInfo2","input1 ");
         message.addServiceType("Test");
-        message.addServiceType("Test1");
-		
+        message.addServiceType("Test2");
+        message.addServiceType("Test3");
+        message.addServiceId(serviceId3);
 		sdl.testOnReceiveMessage(message);
 
 		message = new Message(serviceId);
-        message.addAction("getInfo","abc ");
+        message.addAction("getInfo3","input2 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
 		
 		sdl.testOnReceiveMessage(message);
 
+
+		message = new Message(serviceId);
+        message.addAction("getInfo","input2 ");
+        message.addServiceType("Test");
+        message.addServiceId(serviceId3);
 		
+		sdl.testOnReceiveMessage(message);
+
 	}
 
 	public void giveInfo(Object actionInput, Object srcServiceId) {
