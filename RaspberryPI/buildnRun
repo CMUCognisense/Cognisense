@@ -1,0 +1,2 @@
+javac *.java  -classpath ".:gson-2.2.4.jar:sqlite-jdbc-3.7.2.jar"
+java  -classpath ".:gson-2.2.4.jar:sqlite-jdbc-3.7.2.jar" DoorbellApp
