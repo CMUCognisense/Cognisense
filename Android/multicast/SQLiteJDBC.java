@@ -1,82 +1,66 @@
 package multicast;
+
 import java.sql.*;
 import java.util.HashSet;
-import java.util.LinkedList;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class SQLiteJDBC
 {
-	Connection c;
-    
-	
-	public SQLiteJDBC() {
+	SQLiteDatabase db;
 
-	    try {
-	      Class.forName("org.sqlite.JDBC");
-	      c = DriverManager.getConnection("jdbc:sqlite:test.db");
-	      System.out.println("Opened database successfully");
-	      Statement stmt;
-	      c.setAutoCommit(false);
-	      stmt = c.createStatement();
-	      String sql = "CREATE TABLE IF NOT EXISTS DEVICES " +
-	                   "(ID TEXT PRIMARY KEY     NOT NULL)";
-	      stmt.executeUpdate(sql);
-	      stmt.close();
-	      
-	    } catch ( Exception e ) {
-	        System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-	        //System.exit(0);
-	      }
+	public SQLiteJDBC(Context context) {
 
-		
+		try {
+			db = context.openOrCreateDatabase("test", 0, null);
+			db.execSQL("CREATE TABLE IF NOT EXISTS DEVICES " +
+					"(ID TEXT PRIMARY KEY     NOT NULL);");
+			Log.e("SQLite","Opened database successfully");
+
+		} catch ( Exception e ) {
+			Log.e("SQLite", e.getClass().getName() + ": " + e.getMessage() );
+			//System.exit(0);
+		}
+
+
 	}
-	
+
 	public void insert(String macAddress) {
-		
-		Statement stmt;
+		//String sql = "INSERT INTO DEVICES (ID)" +
+		//               "VALUES ('"+macAddress+"');";
 		try {
-			stmt = c.createStatement();
-		
-	      String sql = "INSERT INTO DEVICES (ID)" +
-	                   "VALUES ('"+macAddress+"');"; 
-	      stmt.executeUpdate(sql);
-	      c.commit();
+			ContentValues values = new ContentValues();
+			values.put("ID", macAddress);
+			db.insertOrThrow("DEVICES", null, values);
 		} catch (SQLException e) {
-	        //System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-			
+			Log.e("SQLite", e.getClass().getName() + ": " + e.getMessage() );
 		}
+
 	}
-	
+
 	public HashSet<String> query() {
+		Cursor c = db.rawQuery("SELECT * FROM DEVICES;", null);
+		HashSet<String> idlist = new HashSet<String>(c.getCount());
 		
-		Statement stmt;
-		HashSet<String> idlist = null;
-		try {
-			stmt = c.createStatement();
-			 ResultSet rs = stmt.executeQuery( "SELECT * FROM DEVICES;" );
-			 idlist = new HashSet<String>();
-		      while ( rs.next() ) {
-		         String  id = rs.getString("ID");
-		         //System.out.println("id: "+id);
-		         idlist.add(id);
-		      }
-		      rs.close();
-		      stmt.close();
-		      return idlist;
-	      
-		} catch (SQLException e) {
-	        System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-	        return idlist;
-			
+		if(c.moveToFirst())
+		{
+			while(!c.isAfterLast())
+			{
+				idlist.add(c.getString(0));
+				c.moveToNext();
+			}
 		}
+		return idlist;
 	}
-	
- public static void main( String args[] )
-  {
-	 SQLiteJDBC db = new SQLiteJDBC();
-	 System.out.println("Before.."+db.query().toString());
-	 
-	 db.insert("asdas");
-	 System.out.println("After.."+db.query().toString());
-	 
-  }
+
+	public int queryNumber() {
+		Cursor c = db.rawQuery("SELECT * FROM DEVICES;", null);
+		return c.getCount();
+	}
+
 }

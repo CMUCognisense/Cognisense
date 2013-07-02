@@ -14,9 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.crypto.Mac;
-
-
+import android.content.Context;
+import android.os.SystemClock;
 
 
 /**
@@ -33,20 +32,20 @@ public class MulticastLayer {
 	public boolean DEBUG;
 	private SQLiteJDBC db;
 	
-	public String getDeviceID() {
-		return deviceID;
-	}
+	
+	//TODO the sequence number can clash 
+	
 	
 	Random rndNumbers;
 	private HashMap<String, Integer> requestMap;
 	//TODO the size of the hash map needs to be limited
-	public MulticastLayer() {
+	public MulticastLayer(Context context) {
 		rndNumbers = new Random(System.currentTimeMillis());
 		replyBuckets = new HashMap<Integer, HashSet<String>>();
 		requestMap = new HashMap<String, Integer>();
-		DEBUG = true;
+		DEBUG = false;
 		getCurrentEnvironmentNetworkIp();
-		db = new SQLiteJDBC();
+		db = new SQLiteJDBC(context);
 		setMaxRetries();
 		new Thread(new RecvThread()).start();
 
@@ -55,7 +54,8 @@ public class MulticastLayer {
 	private void setMaxRetries() {
 		// read from file and set the initial value of the retries
 		// TODO 
-		MAX_RETRIES = db.query().size();
+		MAX_RETRIES = db.queryNumber();
+		if(DEBUG)System.out.println("Devices known before hand are "+ MAX_RETRIES);
 		if(MAX_RETRIES < 6)
 			MAX_RETRIES = 6;
 	}
@@ -73,6 +73,7 @@ public class MulticastLayer {
 	public void sendAll(String Message) {
 		new Thread(new Sender(Message)).start();
 	}
+
 	
 	private class Sender implements Runnable {
 
@@ -97,13 +98,9 @@ public class MulticastLayer {
 
 			while(retries < MAX_RETRIES)
 			{
-				if (!sendPacket("REQ#"+threadSeqNum+"#"+Message))
+				if (!sendPacket("REQ:"+threadSeqNum+":"+Message))
 					if(DEBUG)System.out.println("Couldnot send packet");
-				try {
-					Thread.sleep(TIMEOUT);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				SystemClock.sleep(TIMEOUT);
 				retries++;
 
 			}
@@ -129,7 +126,7 @@ public class MulticastLayer {
 				}
 			}
 			
-			MAX_RETRIES = db.query().size();
+			MAX_RETRIES = db.queryNumber();
 			if(MAX_RETRIES < 6)
 				MAX_RETRIES = 6;
 			
@@ -208,27 +205,14 @@ public class MulticastLayer {
 
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
-	private class FireEvent implements Runnable {
-
-		String message;
-		
-		public FireEvent(String message) {
-			this.message = message;
+	private void fireEvent(String message) {
+		RecvMessageEvent event = new RecvMessageEvent(this,message);
+		if(DEBUG) System.out.println("In Fire event list size:"+_listeners.size());
+		Iterator<MulticastReceive> i = _listeners.iterator();
+		while(i.hasNext())  {
+			if(DEBUG) System.out.println("In Fire event loop");
+			((MulticastReceive) i.next()).onReceiveMessage(event);
 		}
-		
-		@Override
-		public void run() {
-			
-			RecvMessageEvent event = new RecvMessageEvent(this,message);
-			if(DEBUG) System.out.println("In Fire event list size:"+_listeners.size());
-			Iterator<MulticastReceive> i = _listeners.iterator();
-			while(i.hasNext())  {
-				if(DEBUG) System.out.println("In Fire event loop");
-				((MulticastReceive) i.next()).onReceiveMessage(event);
-			}
-			
-		}
-		
 	}
 
 
@@ -310,7 +294,7 @@ public class MulticastLayer {
 
 					if(DEBUG)System.out.println("RECEIVED: "+receiveMsg+" IP:"+ IPAddress.getHostAddress() + ":" + port );
 
-					String[] headers = receiveMsg.split("#");
+					String[] headers = receiveMsg.split(":");
 					// if message has REQ then call upper layer listner and get the reply message.
 					if(headers[0].equals("REQ"))
 					{
@@ -319,14 +303,14 @@ public class MulticastLayer {
 						if(!requestMap.containsKey(seqNumIpAdd))
 						{
 							if(DEBUG)System.out.println("Reply is not cached");
-							new Thread(new FireEvent(headers[2])).start();
+							fireEvent(headers[2]);
 							requestMap.put(seqNumIpAdd, 1);
 							
 						}
 						else 
 							if(DEBUG)System.out.println("Reply is cached so do not bother upper layer");
 						
-						sendPacket("REP#"+headers[1]+"#"+deviceID,IPAddress);
+						sendPacket("REP:"+headers[1]+":"+deviceID,IPAddress);
 						
 					}
 					// if message has REP then put in the reply bucket 
@@ -339,9 +323,15 @@ public class MulticastLayer {
 						}
 						
 						if(replyBucket == null)
+						{
+							if(DEBUG)System.out.println("Reply bucket is null");
 							continue;
+						}
 						else
+						{
+							if(DEBUG)System.out.println("Adding to reply bucket: "+headers[2]);
 							replyBucket.add(headers[2]);
+						}
 					}
 
 

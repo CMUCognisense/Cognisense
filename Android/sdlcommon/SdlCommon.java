@@ -1,42 +1,45 @@
 package sdlcommon;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import servicediscovery.Action;
-import servicediscovery.Location;
 import servicediscovery.Message;
-import servicediscovery.Property;
 import servicediscovery.Service;
 import servicediscovery.Trigger;
+
+import android.content.Context;
 
 import multicast.MulticastLayer;
 import multicast.MulticastReceive;
 import multicast.RecvMessageEvent;
+import servicediscovery.Property;
 
 
 public class SdlCommon implements MulticastReceive {
 
 	MulticastLayer multicastLayer = null;
-	// the serviceid  and the service objects
+	// mapping between the service id  and the service objects
 	Map<String,Service> services;
-	//ArrayList<Method> methods = new ArrayList<Method>();
+	// mapping between the service id and intent filter name
+	Map<String, String> intentFilter;
+	// mapping between the intent filter name and service id
+	Map<String, String> serviceID; 
 	Object appObject = null;
 	boolean DEBUG = false;
 	private int idcounter;
 
-	public SdlCommon(boolean bool) {
-		multicastLayer = new MulticastLayer();
+	public SdlCommon(Context context, boolean bool) {
+		multicastLayer = new MulticastLayer(context);
 		multicastLayer.DEBUG = bool;
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
 		services = new HashMap<String,Service>(2);
+		intentFilter = new HashMap<String, String>();
+		serviceID = new HashMap<String, String>();
 		idcounter=0;
 	}
 
@@ -45,56 +48,35 @@ public class SdlCommon implements MulticastReceive {
 	 * It will perform all the checks for a valid service that need to be done. 
 	 * @param service
 	 */
-	public String registerNewService(String serviceType) {
-
-		Service service = new Service();
-		service.setServiceType(serviceType);
-		String  serviceId  = getNewServiceId();
-		service.setServiceid(serviceId);
-		services.put(serviceId,service);
-		return serviceId;
-
+	public void registerNewService(String intentfilter, Service service) {
+		// update three mappings
+		serviceID.put(intentfilter, service.getServiceid());
+		intentFilter.put(service.getServiceid(), intentfilter);
+		services.put(service.getServiceid(), service);
 	}
+
 	/**
-	 * Gives a new service id everytime
-	 * @return
-	 */	
-	public String getNewServiceId() {
-		
-		UUID a = UUID.randomUUID();
-		String message =  "" + a;
-		return message;
+	 * This method is called when the android communication process receive
+	 * intent from any application or service to update the service. This method
+	 * will update the hash map it is currently maintaining 
+	 * @param service
+	 */
+	public void updateMap(Service service){
+		services.put(service.getServiceid(), service);
 	}
-
+	
 	/**
 	 * this method generates a string from the message object and then passes it to the multicast layer
 	 * reliable multicast layer. 
 	 * @param message
 	 */
 	public void sendMessage(Message message) {
-
 		String msg = message.generateMessage();
 
 		if(msg!=null)
 			multicastLayer.sendAll(msg);
 		else 
 			throw new IllegalArgumentException("Message is not valid");
-	}
-
-	
-
-	public void addProperty(String serviceId, Property property) {
-		Service service = services.get(serviceId);
-		if(property.name == null)
-			property.name = property.getClass().getName();
-		service.addProperties(property);
-	}
-
-	public void addLocation(String serviceId) {
-		Service service = services.get(serviceId);
-		Location location = new Location();
-		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
-		service.addProperties(location);
 	}
 
 	public Map<String,Property> getProperties(String serviceId) {
@@ -128,49 +110,8 @@ public class SdlCommon implements MulticastReceive {
 
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
-		System.out.println("Message Received: "+e.getMessage());
-		Message message = Message.parseMessage(e.getMessage());
-		String actionName = message.getAction();
-		String triggerName = message.getTriggerName();
-		//TODO this has to be an intent to the particular service. 
-		try {
-			if(actionName!=null)
-			{
-				for(Service service: services.values())
-				{
-					for(Action action:service.getActions())
-					{
-						//TODO this has to be generic as i do not know what argument to give.
-						// at the same time the service requires the message object to get the 
-						// service src id and the action and the trigger data. 
-						action.getMethod().invoke(appObject, message.getActionInput(),message.getSrcServiceID());
-					}
-				}
-			}
-			else if(triggerName!=null)
-			{
-				for(Service service: services.values())
-				{
-					for(Trigger trigger:service.getTrigger())
-					{
-						//TODO this has to be generic as i do not know what argument to give.
-						// at the same time the service requires the message object to get the 
-						// service src id and the action and the trigger data. 
-						trigger.getMethod().invoke(appObject, message.getTriggerData(), message.getSrcServiceID());
-					}
-				}
-			}
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		//TODO new logic goes here
+		
 	}
 
 }
