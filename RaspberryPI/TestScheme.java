@@ -1,3 +1,4 @@
+
 import servicediscovery.Message;
 import servicediscovery.ServiceDiscoveryLayer;
 
@@ -15,16 +16,19 @@ public class TestScheme {
 		serviceId2 = sdl.registerNewService("Test2");
 		serviceId3 = sdl.registerNewService("Test3");
 		sdl.addLocation(serviceId);
-		sdl.registerActions(serviceId, "giveInfo", TestScheme.class);
-		sdl.registerActions(serviceId, "getInfo", TestScheme.class);
-		sdl.registerActions(serviceId2, "giveInfo2", TestScheme.class);
-		sdl.registerActions(serviceId2, "getInfo2", TestScheme.class);
-		sdl.registerActions(serviceId3, "giveInfo3", TestScheme.class);
-		sdl.registerActions(serviceId3, "getInfo3", TestScheme.class);
+		sdl.registerActions(serviceId, "giveInfo","giveInfo", TestScheme.class);
+		sdl.registerActions(serviceId, "getInfo","getInfo", TestScheme.class);
+		sdl.registerActions(serviceId2, "giveInfo2","giveInfo", TestScheme.class);
+		sdl.registerActions(serviceId2, "getInfo2","getInfo", TestScheme.class);
+		sdl.registerActions(serviceId3, "giveInfo3","giveInfo", TestScheme.class);
+		sdl.registerActions(serviceId3, "getInfo3","getInfo", TestScheme.class);
 		
+		sdl.addProperty(serviceId, new Brightness(10));
+		sdl.addProperty(serviceId2, new Brightness(20));
+		sdl.addProperty(serviceId3, new Brightness(30));
 		
         Message message = new Message(serviceId);
-        message.addAction("giveInfo2","input1 ");
+        message.addAction("giveInfo","input1 ");
         message.addServiceType("Test");
         message.addServiceType("Test2");
         message.addServiceType("Test3");
@@ -32,7 +36,17 @@ public class TestScheme {
 		sdl.testOnReceiveMessage(message);
 
 		message = new Message(serviceId);
-        message.addAction("getInfo3","input2 ");
+        message.addAction("getInfo","input2 ");
+        message.addServiceType("Test");
+        message.addServiceId(serviceId3);
+		message.addProperty(Brightness.name);
+		message.addPropertyValue(Brightness.name, "VALUE", "20");
+		//System.out.println(message.generateMessage());
+		sdl.testOnReceiveMessage(message);
+
+
+		message = new Message(serviceId);
+        message.addAction("getInfo","input3 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
 		
@@ -40,12 +54,16 @@ public class TestScheme {
 
 
 		message = new Message(serviceId);
-        message.addAction("getInfo","input2 ");
+        message.addAction("giveInfo","input1 ");
         message.addServiceType("Test");
+        message.addServiceType("Test2");
+        message.addServiceType("Test3");
         message.addServiceId(serviceId3);
-		
-		sdl.testOnReceiveMessage(message);
+        message.addProperty(Brightness.name);
+		message.addPropertyValue(Brightness.name, "VALUE", "30");
+        sdl.testOnReceiveMessage(message);
 
+		
 	}
 
 	public void giveInfo(Object actionInput, Object srcServiceId) {

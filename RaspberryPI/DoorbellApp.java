@@ -14,7 +14,7 @@ public class DoorbellApp {
 		 	sdl.registerApp(new DoorbellApp());
 		 	serviceId = sdl.registerNewService("DoorbellApp");
 	        sdl.addLocation(serviceId);
-	        sdl.registerTriggers(serviceId, "onDoorbell", DoorbellApp.class);
+	        sdl.registerTriggers(serviceId, "doorbellTriggerMethod","onDoorbell", DoorbellApp.class);
 	        
 	        Message message = new Message(serviceId);
 	        message.addAction("giveInfo");
@@ -22,7 +22,7 @@ public class DoorbellApp {
 	        sdl.sendMessage(message);
 	    }
 
-	 public void onDoorbell(Object triggerData, Object srcServiceId) {
+	 public void doorbellTriggerMethod(Object triggerData, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
 	    	System.out.println("The properties of the doorbell are :" + (String)triggerData +" SrcServiceID:"+ (String)srcServiceId);
 	    	

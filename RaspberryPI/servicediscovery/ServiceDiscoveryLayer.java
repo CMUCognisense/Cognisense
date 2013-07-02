@@ -81,23 +81,23 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		this.appObject = appObject;
 	}
 
-	public void registerActions(String serviceID, String methodName,
+	public void registerActions(String serviceID, String methodName, String actionName, 
 			Class appClass) throws Exception {
 		Service service = services.get(serviceID);
 		Method appMethod = appClass.getMethod(methodName, Object.class,
 				Object.class);
 		// sets the name and Method of the action
-		Action action = new Action(appMethod, appMethod.getName());
+		Action action = new Action(appMethod, actionName!=null?actionName:methodName);
 		service.addAction(action);
 	}
 
-	public void registerTriggers(String serviceID, String methodName,
+	public void registerTriggers(String serviceID, String methodName, String triggerName,
 			Class appClass) throws Exception {
 		Service service = services.get(serviceID);
 		Method appMethod = appClass.getMethod(methodName, Object.class,
 				Object.class);
 		// sets the name and Method of the trigger
-		Trigger trigger = new Trigger(appMethod, appMethod.getName());
+		Trigger trigger = new Trigger(appMethod, triggerName!=null?triggerName:methodName);
 		service.addTrigger(trigger);
 	}
 

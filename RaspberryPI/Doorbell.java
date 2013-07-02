@@ -11,11 +11,11 @@ public class Doorbell {
 	        sdl.registerApp(new Doorbell());
 	        serviceId = sdl.registerNewService("Doorbell");
 	        sdl.addLocation(serviceId);
-	        sdl.registerActions(serviceId, "giveInfo", Doorbell.class);
+	        sdl.registerActions(serviceId, "infoMethod","giveInfo", Doorbell.class);
 	        
 	    }
 
-	 public void giveInfo(Object actionInput, Object srcServiceId) {
+	 public void infoMethod(Object actionInput, Object srcServiceId) {
 	        // this will print out the message sent by the doorbell.
 	        String location = sdl.getProperties(serviceId).get("Location").toString();
 	        String trigger = sdl.getActions(serviceId).toString();
