@@ -39,6 +39,15 @@ public class Location extends Property {
 		
 	}
 	
+	public String provideLocation(){
+		if(locations.get("home")!=null){
+			
+			return locations.get("home") + " " + locations.get("subL").toString();
+		}else
+			
+			return null;
+	}
+	
 	@Override
 	public boolean match(Map<String,String> queryProperties) {
 		
