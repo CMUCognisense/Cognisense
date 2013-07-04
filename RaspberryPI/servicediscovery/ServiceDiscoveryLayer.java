@@ -154,8 +154,8 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		Service service = services.get(serviceId);
 		List<String> list = new LinkedList<String>();
 
-		if (service.getTrigger() != null) {
-			for (Trigger trig : service.getTrigger().values())
+		if (service.getTriggers() != null) {
+			for (Trigger trig : service.getTriggers().values())
 				list.add(trig.getTriggerTag());
 		}
 		return list;

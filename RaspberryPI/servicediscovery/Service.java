@@ -53,10 +53,18 @@ public class Service {
 			return actions;
 		}
 		
-		public Map<String,Trigger> getTrigger() {
+		public Map<String,Trigger> getTriggers() {
 			return triggers;
 		}
 
+		public Action getAction(String actionName) {
+			return actions.get(actionName);
+		}
+		
+		public Trigger getTrigger(String triggerName) {
+			return triggers.get(triggerName);
+		}
+		
 		public void addAction(Action action) {
 			actions.put(action.getActionTag(),action);
 		}
