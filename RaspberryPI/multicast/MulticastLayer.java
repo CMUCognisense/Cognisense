@@ -40,11 +40,11 @@ public class MulticastLayer {
 	Random rndNumbers;
 	private HashMap<String, Integer> requestMap;
 	//TODO the size of the hash map needs to be limited
-	public MulticastLayer() {
+	public MulticastLayer(boolean bool) {
 		rndNumbers = new Random(System.currentTimeMillis());
 		replyBuckets = new HashMap<Integer, HashSet<String>>();
 		requestMap = new HashMap<String, Integer>();
-		DEBUG = true;
+		DEBUG = bool;
 		getCurrentEnvironmentNetworkIp();
 		db = new SQLiteJDBC();
 		setMaxRetries();
@@ -87,7 +87,7 @@ public class MulticastLayer {
 		public void run() {
 		
 			int retries = 0;
-			System.out.println("Starting Multicast");
+			if(DEBUG)System.out.println("Starting Multicast");
 			HashSet<String> set = new HashSet<String>();
 			synchronized (replyBuckets) {
 				replyBuckets.put(threadSeqNum, set);
@@ -305,8 +305,11 @@ public class MulticastLayer {
 					InetAddress IPAddress = receivePacket.getAddress();
 					int port = receivePacket.getPort();
 
-					if(IPAddress.getHostAddress().equals(currentHostIpAddress))					
-						continue;
+					// if message is sent by me only do not bother
+					if(IPAddress.getHostAddress().equals(currentHostIpAddress))		
+					{
+						System.out.println("From me continue");continue;
+					}
 
 					if(DEBUG)System.out.println("RECEIVED: "+receiveMsg+" IP:"+ IPAddress.getHostAddress() + ":" + port );
 

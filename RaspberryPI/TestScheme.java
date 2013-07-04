@@ -10,7 +10,7 @@ public class TestScheme {
 	static ServiceDiscoveryLayer sdl;
 	public static void main(String[] args) throws Exception{
 		
-		sdl = new ServiceDiscoveryLayer(true);
+		sdl = new ServiceDiscoveryLayer(true, false);
 		sdl.registerApp(new TestScheme());
 		serviceId = sdl.registerNewService("Test");
 		serviceId2 = sdl.registerNewService("Test2");
@@ -33,8 +33,7 @@ public class TestScheme {
         message.addServiceType("Test2");
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
-        System.out.println(message.generateMessage());
-        sdl.testOnReceiveMessage(message);
+        sdl.sendMessage(message);
 
 		message = new Message(serviceId);
         message.addAction("getInfo","input2 ");
@@ -42,16 +41,14 @@ public class TestScheme {
         message.addServiceId(serviceId3);
 		message.addProperty(Brightness.name);
 		message.addPropertyValue(Brightness.name, "VALUE", "10");
-		System.out.println(message.generateMessage());
-		sdl.testOnReceiveMessage(message);
+        sdl.sendMessage(message);
 
 
 		message = new Message(serviceId);
         message.addAction("getInfo","input3 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
-        System.out.println(message.generateMessage());
-		sdl.testOnReceiveMessage(message);
+        sdl.sendMessage(message);
 
 
 		message = new Message(serviceId);
@@ -61,9 +58,7 @@ public class TestScheme {
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
         message.addProperty(Brightness.name);
-		message.addPropertyValue(Brightness.name, "VALUE", "30");
-		System.out.println(message.generateMessage());
-        sdl.testOnReceiveMessage(message);
+        sdl.sendMessage(message);
 
         message = new Message(serviceId);
         message.addAction("giveInfo","input5 ");
@@ -77,9 +72,19 @@ public class TestScheme {
 		message.addPropertyValue("Location", "HOME", "MyHome");
 		message.addPropertyValue("Location", "FLOOR", "one");
 		message.addPropertyValue("Location", "ROOM", "Bedroom");
-		System.out.println(message.generateMessage());
-        sdl.testOnReceiveMessage(message);
+        sdl.sendMessage(message);
 
+		message = new Message(serviceId);
+        message.addAction("getInfo","input6 ");
+        sdl.sendMessage(message);
+
+		message = new Message(serviceId);
+        message.addAction("giveInfo","input7 ");
+        message.addServiceType("Test66");
+        message.addServiceType("Test77");
+        message.addServiceType("Test5");
+        sdl.sendMessage(message);
+        
 	}
 
 	public void giveInfo(Object actionInput, Object srcServiceId) {

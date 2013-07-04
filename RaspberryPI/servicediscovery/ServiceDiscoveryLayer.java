@@ -25,9 +25,8 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	Object appObject = null;
 	boolean DEBUG = false;
 
-	public ServiceDiscoveryLayer(boolean bool) {
-		multicastLayer = new MulticastLayer();
-		multicastLayer.DEBUG = bool;
+	public ServiceDiscoveryLayer(boolean bool, boolean multicast) {
+		multicastLayer = new MulticastLayer(multicast);
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
@@ -72,9 +71,12 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	public void sendMessage(Message message) {
 
 		String msg = message.generateMessage();
-
+		if(DEBUG) System.out.println("Sending message "  +msg);
 		if (msg != null)
+		{
 			multicastLayer.sendAll(msg);
+			processIncomingMessage(msg);
+		}
 		else
 			throw new IllegalArgumentException("Message is not valid");
 	}
@@ -183,13 +185,15 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	
 	/**
-	 * this is a test method for the matching scheme for jiahan This method
+	 * this is a test method for the matching scheme This method
 	 * should print out the method names to be called and the services they
 	 * should be called on Looking at the message object
 	 * 
 	 * @param message
 	 */
-	public void testOnReceiveMessage(Message message) {
+	public void processIncomingMessage(String msg) {
+		if(DEBUG) System.out.println("Processing message");
+		Message message = Message.parseMessage(msg);
 		List<String> idList = message.getServiceIds();
 		List<String> typeList = message.getServiceTypes();
 		Set<Service> set = new HashSet<Service>(); 
@@ -199,11 +203,12 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 			checkServiceTypes(typeList, set);
 
 			if (set.size()>0 && message.getProperties().size() == 0) 
+			{
 				if(message.getAction()!=null)
 					performActions(set, message);
 				else
 					performTriggers(set, message);
-			
+			}
 			else if (set.size()>0 && message.getProperties().size() >0)
 			{
 				Set<Service> list = new HashSet<Service>();
@@ -224,7 +229,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 				else
 					performTriggers(list, message);
 			}
-			else if(set.size()==0)
+			else if(idList.size() == 0 && typeList.size() == 0)
 				if(message.getAction()!=null)
 					performActions(services.values(), message);
 				else
@@ -246,54 +251,8 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	@Override
 	public void onReceiveMessage(RecvMessageEvent e) {
-		System.out.println("Message Received: " + e.getMessage());
-		Message message = Message.parseMessage(e.getMessage());
-		String actionName = message.getAction();
-		String triggerName = message.getTriggerName();
-		try {
-			if (actionName != null) {
-				for (Service service : services.values()) {
-					for (Action action : service.getActions().values()) {
-						// TODO this has to be generic as i do not know what
-						// argument to give.
-						// at the same time the service requires the message
-						// object to get the
-						// service src id and the action and the trigger data.
-						action.getMethod().invoke(appObject,
-								message.getActionInput(),
-								message.getSrcServiceID());
-					}
-				}
-			} else if (triggerName != null) {
-				for (Service service : services.values()) {
-					for (Trigger trigger : service.getTrigger().values()) {
-						// TODO this has to be generic as i do not know what
-						// argument to give.
-						// at the same time the service requires the message
-						// object to get the
-						// service src id and the action and the trigger data.
-						trigger.getMethod().invoke(appObject,
-								message.getTriggerData(),
-								message.getSrcServiceID());
-					}
-				}
-			}
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-	}
-
-	public static void main(String args[]) {
-		ServiceDiscoveryLayer sdl = new ServiceDiscoveryLayer(true);
-
+		if(DEBUG)System.out.println("Message Received: " + e.getMessage());
+		processIncomingMessage(e.getMessage());
 	}
 
 }

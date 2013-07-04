@@ -172,6 +172,9 @@ public class Message {
 		if(srcServiceID==null)
 			return null;
 		
+		if(serviceID.size() == 0 && serviceTypes.size() == 0 && properties.size() > 0)
+			return null;
+		
 		Gson gson = new Gson();
 		String json = gson.toJson(this);
 		return json;

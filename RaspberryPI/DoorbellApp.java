@@ -10,7 +10,7 @@ public class DoorbellApp {
 	static String serviceId;
 	static ServiceDiscoveryLayer sdl;
 	 public static void main(String[] args) throws Exception{
-		 	sdl = new ServiceDiscoveryLayer(true);
+		 	sdl = new ServiceDiscoveryLayer(true,false);
 		 	sdl.registerApp(new DoorbellApp());
 		 	serviceId = sdl.registerNewService("DoorbellApp");
 	        sdl.addLocation(serviceId);
