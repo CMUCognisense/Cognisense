@@ -22,16 +22,16 @@ import java.util.Set;
 public class Service {
 		private String serviceid;
 		private String serviceType;
-		private Set<Action> actions;
-		private Set<Trigger> triggers;
+		private Map<String,Action> actions;
+		private Map<String,Trigger> triggers;
 		private List<String> tiggersGenerated;
 		// property name and the property object
 		private Map<String,Property> properties;
 		
 		
 		public Service() {
-			actions = new HashSet<Action>();
-			triggers = new HashSet<Trigger>();
+			actions = new HashMap<String,Action>();
+			triggers = new HashMap<String,Trigger>();
 			setProperties(new HashMap<String, Property>());
 		}
 		
@@ -47,23 +47,22 @@ public class Service {
 		public void setServiceType(String serviceType) {
 			this.serviceType = serviceType;
 		}
-		public Set<Action> getActions() {
+		public Map<String,Action> getActions() {
 			return actions;
 		}
-		public void setActions(Set<Action> actions) {
-			this.actions = actions;
-		}
-		public Set<Trigger> getTrigger() {
+		
+		public Map<String,Trigger> getTrigger() {
 			return triggers;
-		}
-		public void setTrigger(Set<Trigger> trigger) {
-			this.triggers = trigger;
 		}
 
 		public void addAction(Action action) {
-			actions.add(action);
+			actions.put(action.getActionTag(),action);
 		}
 
+		public Action isActionPresent(String actionTag) {
+			return actions.get(actionTag);
+		}
+		
 		public Map<String,Property> getProperties() {
 			return properties;
 		}
@@ -77,7 +76,22 @@ public class Service {
 		}
 		
 		public void addTrigger(Trigger trigger) {
-			triggers.add(trigger);
+			triggers.put(trigger.getTriggerTag(),trigger);
+		}
+
+		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
+			if(properties.get(propertyName) != null)
+			{
+				if(properties.get(propertyName).match(propertyAttributes))
+					return true;
+				else
+					return false;
+			}
+			return false;
+		}
+
+		public Trigger isTriggerPresent(String triggerName) {
+			return triggers.get(triggerName);
 		}
 		
 		

@@ -32,8 +32,10 @@ public class Brightness extends Property {
 			return false;
 		if(properties.get("VALUE")==null)
 			return false;
-		if(properties.get("VALUE").equals(Integer.toString(value)));
+		if(properties.get("VALUE").equals(Integer.toString(value)))
 			return true;
+		else 
+			return false;
 	}
 
 	public int getValue() {

@@ -2,11 +2,13 @@ package servicediscovery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
@@ -124,7 +126,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		List<String> list = new LinkedList<String>();
 
 		if (service.getActions() != null) {
-			for (Action action : service.getActions())
+			for (Action action : service.getActions().values())
 				list.add(action.getActionTag());
 		}
 		return list;
@@ -135,12 +137,51 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		List<String> list = new LinkedList<String>();
 
 		if (service.getTrigger() != null) {
-			for (Trigger trig : service.getTrigger())
+			for (Trigger trig : service.getTrigger().values())
 				list.add(trig.getTriggerTag());
 		}
 		return list;
 	}
 
+	
+	private void checkServiceIds(List<String> idList, Set<Service> set) {
+		for (Service service : services.values()) {
+			for (String incomingSId : idList) {
+				if (service.getServiceid().equals(incomingSId)) {
+					set.add(service);
+				}
+			}
+		}
+	}
+	
+	private void checkServiceTypes(List<String> typeList, Set<Service> set) {
+
+		for (Service service : services.values()) {
+			for (String type : typeList) {
+				if (service.getServiceType().equals(type)) {
+					set.add(service);
+				}
+			}
+		}
+	}
+	
+	private void performActions(Collection<Service>set,Message message ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (Service service : set) 
+		{
+				Action action = service.isActionPresent(message.getAction());
+				if(action!=null)action.getMethod().invoke(appObject,message.getActionInput(),message.getSrcServiceID());
+		}
+	}
+	
+	private void performTriggers(Collection<Service>set,Message message ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (Service service : set) 
+		{
+				Trigger trigger = service.isTriggerPresent(message.getTriggerName());
+				if(trigger!=null)trigger.getMethod().invoke(appObject,message.getTriggerData(),message.getSrcServiceID());
+		}
+	}
+
+	
 	/**
 	 * this is a test method for the matching scheme for jiahan This method
 	 * should print out the method names to be called and the services they
@@ -149,97 +190,47 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	 * @param message
 	 */
 	public void testOnReceiveMessage(Message message) {
-		String actionName = message.getAction();
-		String triggerName = message.getTriggerName();
 		List<String> idList = message.getServiceIds();
 		List<String> typeList = message.getServiceTypes();
+		Set<Service> set = new HashSet<Service>(); 
 		try {
-			if (actionName != null) {
-				Set<Service> set = new HashSet<Service>();
-				boolean notNull = false;
-				for (Service service : services.values()) {
-					for (String incomingSId : idList) {
-						if (service.getServiceid().equals(incomingSId)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				for (Service service : services.values()) {
-					for (String type : typeList) {
-						if (service.getServiceType().equals(type)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				if (notNull) {
-					for (Service service : set) {
-						for (Action action : service.getActions()) {
-							if (action.getActionTag().equals(actionName)) {
-								action.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
+			
+			checkServiceIds(idList, set);
+			checkServiceTypes(typeList, set);
 
-						}
-					}
-				} else {
-					for (Service service : services.values()) {
-						for (Action action : service.getActions()) {
-							if (action.getActionTag().equals(actionName)) {
-								action.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-						}
-					}
-
-				}
-			} else if (triggerName != null) {
-				Set<Service> set = new HashSet<Service>();
-				boolean notNull = false;
-				for (Service service : services.values()) {
-					for (String incomingSId : idList) {
-						if (service.getServiceid().equals(incomingSId)) {
-							set.add(service);
-							notNull = true;
-						}
+			if (set.size()>0 && message.getProperties().size() == 0) 
+				if(message.getAction()!=null)
+					performActions(set, message);
+				else
+					performTriggers(set, message);
+			
+			else if (set.size()>0 && message.getProperties().size() >0)
+			{
+				Set<Service> list = new HashSet<Service>();
+				for (Service service : set) 
+				{
+					for(String propertyName : message.getProperties())
+					{
+						if(service.isPropertyMatching(propertyName, message.getPropertyAttributes(propertyName)))
+							list.add(service);
+						else
+							break;
+						
 					}
 				}
-				for (Service service : services.values()) {
-					for (String type : typeList) {
-						if (service.getServiceType().equals(type)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				if (notNull) {
-					for (Service service : set) {
-						for (Trigger trigger : service.getTrigger()) {
-							if (trigger.getTriggerTag().equals(actionName)) {
-
-								trigger.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-
-						}
-					}
-				} else {
-					for (Service service : services.values()) {
-						for (Trigger trigger : service.getTrigger()) {
-							if (trigger.getTriggerTag().equals(actionName)) {
-								trigger.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-						}
-					}
-
-				}
+				// not the set only contains services that have matching properties. 
+				if(message.getAction()!=null)
+					performActions(list, message);
+				else
+					performTriggers(list, message);
 			}
+			else if(set.size()==0)
+				if(message.getAction()!=null)
+					performActions(services.values(), message);
+				else
+					performTriggers(services.values(), message);
+				
+				
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -262,7 +253,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		try {
 			if (actionName != null) {
 				for (Service service : services.values()) {
-					for (Action action : service.getActions()) {
+					for (Action action : service.getActions().values()) {
 						// TODO this has to be generic as i do not know what
 						// argument to give.
 						// at the same time the service requires the message
@@ -275,7 +266,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 				}
 			} else if (triggerName != null) {
 				for (Service service : services.values()) {
-					for (Trigger trigger : service.getTrigger()) {
+					for (Trigger trigger : service.getTrigger().values()) {
 						// TODO this has to be generic as i do not know what
 						// argument to give.
 						// at the same time the service requires the message

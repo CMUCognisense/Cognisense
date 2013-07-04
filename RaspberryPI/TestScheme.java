@@ -33,15 +33,16 @@ public class TestScheme {
         message.addServiceType("Test2");
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
-		sdl.testOnReceiveMessage(message);
+        System.out.println(message.generateMessage());
+        sdl.testOnReceiveMessage(message);
 
 		message = new Message(serviceId);
         message.addAction("getInfo","input2 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
 		message.addProperty(Brightness.name);
-		message.addPropertyValue(Brightness.name, "VALUE", "20");
-		//System.out.println(message.generateMessage());
+		message.addPropertyValue(Brightness.name, "VALUE", "10");
+		System.out.println(message.generateMessage());
 		sdl.testOnReceiveMessage(message);
 
 
@@ -49,21 +50,36 @@ public class TestScheme {
         message.addAction("getInfo","input3 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
-		
+        System.out.println(message.generateMessage());
 		sdl.testOnReceiveMessage(message);
 
 
 		message = new Message(serviceId);
-        message.addAction("giveInfo","input1 ");
+        message.addAction("giveInfo","input4 ");
         message.addServiceType("Test");
         message.addServiceType("Test2");
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
         message.addProperty(Brightness.name);
 		message.addPropertyValue(Brightness.name, "VALUE", "30");
+		System.out.println(message.generateMessage());
         sdl.testOnReceiveMessage(message);
 
-		
+        message = new Message(serviceId);
+        message.addAction("giveInfo","input5 ");
+        message.addServiceType("Test");
+        message.addServiceType("Test2");
+        message.addServiceType("Test3");
+        message.addServiceId(serviceId3);
+        message.addProperty(Brightness.name);
+		message.addPropertyValue(Brightness.name, "VALUE", "10");
+		message.addProperty("Location");
+		message.addPropertyValue("Location", "HOME", "MyHome");
+		message.addPropertyValue("Location", "FLOOR", "one");
+		message.addPropertyValue("Location", "ROOM", "Bedroom");
+		System.out.println(message.generateMessage());
+        sdl.testOnReceiveMessage(message);
+
 	}
 
 	public void giveInfo(Object actionInput, Object srcServiceId) {
