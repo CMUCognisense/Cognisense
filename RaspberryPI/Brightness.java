@@ -38,6 +38,11 @@ public class Brightness extends Property {
 			return false;
 	}
 
+	@Override
+	public String printProperty() {
+		return "PROPERTYNAME-"+name+",VALUE-"+value+",";
+	}
+	
 	public int getValue() {
 		return value;
 	}

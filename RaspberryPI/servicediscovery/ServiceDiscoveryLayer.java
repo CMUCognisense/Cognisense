@@ -104,6 +104,14 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		Trigger trigger = new Trigger(appMethod, triggerName!=null?triggerName:methodName);
 		service.addTrigger(trigger);
 	}
+	
+	public void addTriggerGenerated(String serviceId, String trigger) {
+		services.get(serviceId).addTriggerGenerated(trigger);
+	}
+	
+	public List<String> getTriggerGenerated(String serviceId) {
+		return services.get(serviceId).getTriggerGenerated(); 
+	}
 
 	public void addProperty(String serviceId, Property property) {
 		Service service = services.get(serviceId);
@@ -112,12 +120,20 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		service.addProperties(property);
 	}
 
-	public void addLocation(String serviceId) {
+	public void addLocationProperty(String serviceId) {
 		Service service = services.get(serviceId);
 		Location location = new Location();
-		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
 		service.addProperties(location);
 	}
+	
+	public void addLocationValue(String serviceId, String home, String floor, String room, String inRoom, String userTag) {
+		Service service = services.get(serviceId);
+		Location location = (Location) service.getProperty("Location");
+		location.addLocation(home, floor, room, inRoom, userTag);
+		service.setProperty("Location", location);
+	}
+
+	
 
 	public Map<String, Property> getProperties(String serviceId) {
 		return services.get(serviceId).getProperties();
@@ -253,6 +269,44 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 	public void onReceiveMessage(RecvMessageEvent e) {
 		if(DEBUG)System.out.println("Message Received: " + e.getMessage());
 		processIncomingMessage(e.getMessage());
+	}
+
+	public String getInfo(String serviceId) {
+		StringBuilder builder = new StringBuilder();
+			
+		if(services.get(serviceId) != null)
+		{
+			builder.append("SERVICEID-");
+			builder.append(serviceId);
+			builder.append(",");
+			Service service = services.get(serviceId);
+			builder.append("SERVICETYPE-");
+			builder.append(service.getServiceType());
+			builder.append(",");
+			for(String action: getActions(serviceId))
+			{
+				builder.append("ACTION-");
+				builder.append(action);
+				builder.append(",");
+			}
+			for(String gentrigger: getTriggerGenerated(serviceId))
+			{
+				builder.append("TRIGGERSGEN-");
+				builder.append(gentrigger);
+				builder.append(",");
+			}
+			for(String trigger: getTriggers(serviceId))
+			{
+				builder.append("TRIGGERS-");
+				builder.append(trigger);
+				builder.append(",");
+			}
+			for( Property property: getProperties(serviceId).values())
+				builder.append(property.printProperty());
+			
+		}
+		
+		return builder.toString();
 	}
 
 }

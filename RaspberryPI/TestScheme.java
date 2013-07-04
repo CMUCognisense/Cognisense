@@ -15,7 +15,8 @@ public class TestScheme {
 		serviceId = sdl.registerNewService("Test");
 		serviceId2 = sdl.registerNewService("Test2");
 		serviceId3 = sdl.registerNewService("Test3");
-		sdl.addLocation(serviceId);
+		sdl.addLocationProperty(serviceId);
+		sdl.addLocationValue(serviceId, "MyHome", "one", "Bedroom", null, "nearWindow");
 		sdl.registerActions(serviceId, "giveInfo","giveInfo", TestScheme.class);
 		sdl.registerActions(serviceId, "getInfo","getInfo", TestScheme.class);
 		sdl.registerActions(serviceId2, "giveInfo2","giveInfo", TestScheme.class);
@@ -88,7 +89,7 @@ public class TestScheme {
 	}
 
 	public void giveInfo(Object actionInput, Object srcServiceId) {
-		System.out.println("GiveInfo is called " + (String)actionInput + (String)srcServiceId );
+		System.out.println("GiveInfo is called " + (String)actionInput + (String)srcServiceId +" Info is\n" + sdl.getInfo(serviceId));
 		
 	}
 	
@@ -97,7 +98,7 @@ public class TestScheme {
 	}
 	
 	public void giveInfo2(Object actionInput, Object srcServiceId) {
-		System.out.println("GiveInfo2 is called " + (String)actionInput + (String)srcServiceId );
+		System.out.println("GiveInfo2 is called " + (String)actionInput + (String)srcServiceId +" Info is\n" + sdl.getInfo(serviceId2));
 		
 	}
 	
@@ -106,7 +107,7 @@ public class TestScheme {
 	}
 	
 	public void giveInfo3(Object actionInput, Object srcServiceId) {
-		System.out.println("GiveInfo3 is called " + (String)actionInput + (String)srcServiceId );
+		System.out.println("GiveInfo3 is called " + (String)actionInput + (String)srcServiceId +" Info is\n" + sdl.getInfo(serviceId3) );
 		
 	}
 	

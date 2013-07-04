@@ -10,7 +10,7 @@ public class Doorbell {
 	        sdl = new ServiceDiscoveryLayer(true,false);
 	        sdl.registerApp(new Doorbell());
 	        serviceId = sdl.registerNewService("Doorbell");
-	        sdl.addLocation(serviceId);
+	        sdl.addLocationProperty(serviceId);
 	        sdl.registerActions(serviceId, "infoMethod","giveInfo", Doorbell.class);
 	        
 	    }

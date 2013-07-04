@@ -307,9 +307,7 @@ public class MulticastLayer {
 
 					// if message is sent by me only do not bother
 					if(IPAddress.getHostAddress().equals(currentHostIpAddress))		
-					{
-						System.out.println("From me continue");continue;
-					}
+						continue;
 
 					if(DEBUG)System.out.println("RECEIVED: "+receiveMsg+" IP:"+ IPAddress.getHostAddress() + ":" + port );
 

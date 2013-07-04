@@ -12,6 +12,7 @@
 
 package servicediscovery;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ public class Service {
 		private String serviceType;
 		private Map<String,Action> actions;
 		private Map<String,Trigger> triggers;
-		private List<String> tiggersGenerated;
+		private List<String> triggersGenerated;
 		// property name and the property object
 		private Map<String,Property> properties;
 		
@@ -32,6 +33,7 @@ public class Service {
 		public Service() {
 			actions = new HashMap<String,Action>();
 			triggers = new HashMap<String,Trigger>();
+			triggersGenerated = new LinkedList<String>();
 			setProperties(new HashMap<String, Property>());
 		}
 		
@@ -78,7 +80,15 @@ public class Service {
 		public void addTrigger(Trigger trigger) {
 			triggers.put(trigger.getTriggerTag(),trigger);
 		}
+		
+		public void addTriggerGenerated(String trigger) {
+			triggersGenerated.add(trigger);
+		}
 
+		public List<String> getTriggerGenerated() {
+			return triggersGenerated;
+		}
+		
 		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
 			if(properties.get(propertyName) != null)
 			{
@@ -93,7 +103,13 @@ public class Service {
 		public Trigger isTriggerPresent(String triggerName) {
 			return triggers.get(triggerName);
 		}
+
+		public Property getProperty(String propertyName) {
+			return properties.get(propertyName);
+		}
 		
-		
+		public void setProperty(String propertyName, Property property) {
+			properties.put(propertyName, property);
+		}
 		
 	}

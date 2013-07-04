@@ -13,7 +13,7 @@ public class DoorbellApp {
 		 	sdl = new ServiceDiscoveryLayer(true,false);
 		 	sdl.registerApp(new DoorbellApp());
 		 	serviceId = sdl.registerNewService("DoorbellApp");
-	        sdl.addLocation(serviceId);
+	        sdl.addLocationProperty(serviceId);
 	        sdl.registerTriggers(serviceId, "doorbellTriggerMethod","onDoorbell", DoorbellApp.class);
 	        
 	        Message message = new Message(serviceId);
