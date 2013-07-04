@@ -238,4 +238,43 @@ public class ServiceDiscoveryLayer{
 		update.putExtra("service", service);
 		appContext.sendBroadcast(update);
 	}
+
+	public String getInfo(String serviceId) {
+		StringBuilder builder = new StringBuilder();
+			
+		if(services.get(serviceId) != null)
+		{
+			builder.append("SERVICEID-");
+			builder.append(serviceId);
+			builder.append(",");
+			Service service = services.get(serviceId);
+			builder.append("SERVICETYPE-");
+			builder.append(service.getServiceType());
+			builder.append(",");
+			for(String action: getActions(serviceId))
+			{
+				builder.append("ACTION-");
+				builder.append(action);
+				builder.append(",");
+			}
+			for(String gentrigger: getTriggerGenerated(serviceId))
+			{
+				builder.append("TRIGGERSGEN-");
+				builder.append(gentrigger);
+				builder.append(",");
+			}
+			for(String trigger: getTriggers(serviceId))
+			{
+				builder.append("TRIGGERS-");
+				builder.append(trigger);
+				builder.append(",");
+			}
+			for( Property property: getProperties(serviceId).values())
+				builder.append(property.printProperty());
+			
+		}
+		
+		return builder.toString();
+	}
+
 }

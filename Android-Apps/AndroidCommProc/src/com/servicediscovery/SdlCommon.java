@@ -24,9 +24,8 @@ public class SdlCommon implements MulticastReceive {
 	Object appObject = null;
 	boolean DEBUG = false;
 
-	public SdlCommon(Context context, boolean bool) {
-		multicastLayer = new MulticastLayer(context);
-		multicastLayer.DEBUG = bool;
+	public SdlCommon(Context context, boolean bool, boolean multicast) {
+		multicastLayer = new MulticastLayer(context, multicast);
 		DEBUG = bool;
 		System.out.println("Started the Multicast layer");
 		multicastLayer.addEventListener(this);
@@ -65,9 +64,12 @@ public class SdlCommon implements MulticastReceive {
 	public void sendMessage(Message message) {
 
 		String msg = message.generateMessage();
-
+		if(DEBUG) System.out.println("Sending message "  +msg);
 		if (msg != null)
+		{
 			multicastLayer.sendAll(msg);
+			processIncomingMessage(msg);
+		}
 		else
 			throw new IllegalArgumentException("Message is not valid");
 	}
@@ -80,9 +82,8 @@ public class SdlCommon implements MulticastReceive {
 		Service service = services.get(serviceId);
 		List<String> list = new LinkedList<String>();
 
-		if(service.getActions()!=null)
-		{
-			for(Action action:service.getActions())
+		if (service.getActions() != null) {
+			for (Action action : service.getActions().values())
 				list.add(action.getActionTag());
 		}
 		return list;
@@ -92,110 +93,104 @@ public class SdlCommon implements MulticastReceive {
 		Service service = services.get(serviceId);
 		List<String> list = new LinkedList<String>();
 
-		if(service.getTrigger()!=null)
-		{
-			for(Trigger trig:service.getTrigger())
+		if (service.getTrigger() != null) {
+			for (Trigger trig : service.getTrigger().values())
 				list.add(trig.getTriggerTag());
 		}
 		return list;
 	}
 
-
-	@Override
-	public void onReceiveMessage(RecvMessageEvent e) {
-		System.out.println("Message Received: " + e.getMessage());
-		Message message = Message.parseMessage(e.getMessage());
-				String actionName = message.getAction();
-		String triggerName = message.getTriggerName();
-		List<String> idList = message.getServiceIds();
-		List<String> typeList = message.getServiceTypes();
-		try {
-			if (actionName != null) {
-				Set<Service> set = new HashSet<Service>();
-				boolean notNull = false;
-				for (Service service : services.values()) {
-					for (String incomingSId : idList) {
-						if (service.getServiceid().equals(incomingSId)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				for (Service service : services.values()) {
-					for (String type : typeList) {
-						if (service.getServiceType().equals(type)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				if (notNull) {
-					for (Service service : set) {
-						for (Action action : service.getActions()) {
-							if (action.getActionTag().equals(actionName)) {
-								action.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-
-						}
-					}
-				} else {
-					for (Service service : services.values()) {
-						for (Action action : service.getActions()) {
-							if (action.getActionTag().equals(actionName)) {
-								action.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-						}
-					}
-
-				}
-			} else if (triggerName != null) {
-				Set<Service> set = new HashSet<Service>();
-				boolean notNull = false;
-				for (Service service : services.values()) {
-					for (String incomingSId : idList) {
-						if (service.getServiceid().equals(incomingSId)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				for (Service service : services.values()) {
-					for (String type : typeList) {
-						if (service.getServiceType().equals(type)) {
-							set.add(service);
-							notNull = true;
-						}
-					}
-				}
-				if (notNull) {
-					for (Service service : set) {
-						for (Trigger trigger : service.getTrigger()) {
-							if (trigger.getTriggerTag().equals(actionName)) {
-
-								trigger.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-
-						}
-					}
-				} else {
-					for (Service service : services.values()) {
-						for (Trigger trigger : service.getTrigger()) {
-							if (trigger.getTriggerTag().equals(actionName)) {
-								trigger.getMethod().invoke(appObject,
-										message.getActionInput(),
-										message.getSrcServiceID());
-							}
-						}
-					}
-
+	
+	private void checkServiceIds(List<String> idList, Set<Service> set) {
+		for (Service service : services.values()) {
+			for (String incomingSId : idList) {
+				if (service.getServiceid().equals(incomingSId)) {
+					set.add(service);
 				}
 			}
+		}
+	}
+	
+	private void checkServiceTypes(List<String> typeList, Set<Service> set) {
+
+		for (Service service : services.values()) {
+			for (String type : typeList) {
+				if (service.getServiceType().equals(type)) {
+					set.add(service);
+				}
+			}
+		}
+	}
+	
+	private void performActions(Collection<Service>set,Message message ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (Service service : set) 
+		{
+				Action action = service.isActionPresent(message.getAction());
+				if(action!=null)action.getMethod().invoke(appObject,message.getActionInput(),message.getSrcServiceID());
+		}
+	}
+	
+	private void performTriggers(Collection<Service>set,Message message ) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		for (Service service : set) 
+		{
+				Trigger trigger = service.isTriggerPresent(message.getTriggerName());
+				if(trigger!=null)trigger.getMethod().invoke(appObject,message.getTriggerData(),message.getSrcServiceID());
+		}
+	}
+
+	
+	/**
+	 * this is a test method for the matching scheme This method
+	 * should print out the method names to be called and the services they
+	 * should be called on Looking at the message object
+	 * 
+	 * @param message
+	 */
+	public void processIncomingMessage(String msg) {
+		if(DEBUG) System.out.println("Processing message");
+		Message message = Message.parseMessage(msg);
+		List<String> idList = message.getServiceIds();
+		List<String> typeList = message.getServiceTypes();
+		Set<Service> set = new HashSet<Service>(); 
+		try {
+			
+			checkServiceIds(idList, set);
+			checkServiceTypes(typeList, set);
+
+			if (set.size()>0 && message.getProperties().size() == 0) 
+			{
+				if(message.getAction()!=null)
+					performActions(set, message);
+				else
+					performTriggers(set, message);
+			}
+			else if (set.size()>0 && message.getProperties().size() >0)
+			{
+				Set<Service> list = new HashSet<Service>();
+				for (Service service : set) 
+				{
+					for(String propertyName : message.getProperties())
+					{
+						if(service.isPropertyMatching(propertyName, message.getPropertyAttributes(propertyName)))
+							list.add(service);
+						else
+							break;
+						
+					}
+				}
+				// not the set only contains services that have matching properties. 
+				if(message.getAction()!=null)
+					performActions(list, message);
+				else
+					performTriggers(list, message);
+			}
+			else if(idList.size() == 0 && typeList.size() == 0)
+				if(message.getAction()!=null)
+					performActions(services.values(), message);
+				else
+					performTriggers(services.values(), message);
+				
+				
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -207,7 +202,14 @@ public class SdlCommon implements MulticastReceive {
 			e1.printStackTrace();
 		}
 
-		
 	}
+
+	@Override
+	public void onReceiveMessage(RecvMessageEvent e) {
+		if(DEBUG)System.out.println("Message Received: " + e.getMessage());
+		processIncomingMessage(e.getMessage());
+	}
+
+		
 
 }

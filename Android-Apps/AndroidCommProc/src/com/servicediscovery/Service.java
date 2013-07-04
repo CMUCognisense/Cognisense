@@ -13,6 +13,7 @@
 package com.servicediscovery;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,24 +22,21 @@ import java.util.Set;
 
 import android.content.Intent;
 
-
 public class Service implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String serviceid;
 	private String serviceType;
-	private Set<Action> actions;
-	private Set<Trigger> triggers;
-	private List<String> tiggersGenerated;
+	private Map<String,Action> actions;
+	private Map<String,Trigger> triggers;
+	private List<String> triggersGenerated;
 	// property name and the property object
 	private Map<String,Property> properties;
 
 
 	public Service() {
-		actions = new HashSet<Action>();
-		triggers = new HashSet<Trigger>();
+		actions = new HashMap<String,Action>();
+		triggers = new HashMap<String,Trigger>();
+		triggersGenerated = new LinkedList<String>();
 		setProperties(new HashMap<String, Property>());
 	}
 
@@ -85,5 +83,36 @@ public class Service implements Serializable{
 
 	public void addTrigger(Trigger trigger) {
 		triggers.add(trigger);
+		public void addTriggerGenerated(String trigger) {
+			triggersGenerated.add(trigger);
+		}
+
+		public List<String> getTriggerGenerated() {
+			return triggersGenerated;
+		}
+		
+		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
+			if(properties.get(propertyName) != null)
+			{
+				if(properties.get(propertyName).match(propertyAttributes))
+					return true;
+				else
+					return false;
+			}
+			return false;
+		}
+
+		public Trigger isTriggerPresent(String triggerName) {
+			return triggers.get(triggerName);
+		}
+
+		public Property getProperty(String propertyName) {
+			return properties.get(propertyName);
+		}
+		
+		public void setProperty(String propertyName, Property property) {
+			properties.put(propertyName, property);
+		}
+		
 	}
 }

@@ -16,5 +16,9 @@ public class Volume extends Property{
 	public void setLevel(String level) {
 		this.level = level;
 	}
+	@Override
+	public String printProperty() {
+		return "PROPERTYNAME-"+name+",LEVEL-"+level;
+	}
 
 }

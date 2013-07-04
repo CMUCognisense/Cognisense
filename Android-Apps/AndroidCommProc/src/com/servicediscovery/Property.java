@@ -9,4 +9,6 @@ public abstract class Property implements Serializable{
 	
 	public abstract boolean match(Map<String,String> properties);
 	
+	public abstract String printProperty();
+	
 }
