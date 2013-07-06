@@ -309,4 +309,11 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		return builder.toString();
 	}
 
+	public String getIpAddress() {
+		return multicastLayer.getCurrentEnvironmentNetworkIp();
+
+	}
+
+	
+	
 }

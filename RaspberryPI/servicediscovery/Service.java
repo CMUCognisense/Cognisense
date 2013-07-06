@@ -12,6 +12,7 @@
 
 package servicediscovery;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
@@ -120,4 +121,17 @@ public class Service {
 			properties.put(propertyName, property);
 		}
 		
+		public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+			Service service = new Service();
+			service.setServiceType("Speaker");
+			String serviceId = "12-323-42343-343-232";
+			service.setServiceid(serviceId);
+			Method appMethod = Service.class.getMethod("isTriggerPresent", String.class);
+			Action action = new Action(appMethod, "isTriggerPresent");
+			service.addAction(action);
+			Location location = new Location();
+			service.addProperties(location);
+			
+			
+		}		
 	}

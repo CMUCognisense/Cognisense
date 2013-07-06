@@ -120,6 +120,7 @@ public class Location extends Property {
 		
 		Location speakerLocation = new Location();
 		speakerLocation.addLocation("MyHome", "one", "bedroom", "top", "Nearwindow");
+		System.out.println(speakerLocation.printProperty());
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("HOME","MyHome");
 		checkMatch(speakerLocation, map);
@@ -154,7 +155,7 @@ public class Location extends Property {
 	public String printProperty() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("PROPERTYNAME-");
-		buffer.append(name);
+		buffer.append("Location");
 		buffer.append(",");
 		for(Entry<String,SubLocation> entry : locations.entrySet()) 
 		{
