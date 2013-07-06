@@ -22,12 +22,13 @@ import java.util.Set;
 
 
 public class Service implements Serializable{
+
 	private static final long serialVersionUID = 1L;
 	private String serviceid;
 	private String serviceType;
 	private Map<String,Action> actions;
 	private Map<String,Trigger> triggers;
-	private LinkedList<String> triggersGenerated;
+	private List<String> triggersGenerated;
 	// property name and the property object
 	private Map<String,Property> properties;
 

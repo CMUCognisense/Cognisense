@@ -4,10 +4,6 @@ import java.lang.reflect.Method;
 
 
 public class Trigger implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	Method method;
 	String triggerTag;

@@ -98,7 +98,7 @@ public class MulticastLayer {
 
 			while(retries < MAX_RETRIES)
 			{
-				if (!sendPacket("REQ:"+threadSeqNum+":"+Message))
+				if (!sendPacket("REQ#"+threadSeqNum+"#"+Message))
 					if(DEBUG)System.out.println("Couldnot send packet");
 				SystemClock.sleep(TIMEOUT);
 				retries++;
