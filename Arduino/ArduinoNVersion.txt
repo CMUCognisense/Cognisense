@@ -1,0 +1,158 @@
+/*
+
+  SpiUartTerminal - tool to help troubleshoot problems with WiFly shield
+
+  This code will initialise and test the SC16IS750 UART-SPI bridge then enable you
+  to send commands to the WiFly module.
+
+  Copyright (c) 2010 SparkFun Electronics. http://sparkfun.com LGPL 3.0
+
+ */
+
+#include <SPI.h>
+#include <WiFly.h>
+#include <EEPROM.h>
+int ledPin = 13;
+int inPin = 7;
+int val = 0;
+const int Retries = 5;
+const int length = 64;
+int lastButtonState = 1;
+char buffer[length];
+boolean result = false;
+
+const int bytesToRead = 320;
+int address = 0;
+
+char tmp2;
+char tmp1;
+int value = 0;
+int nextStartIndex = 0;
+String str = "";
+int cnt[20];
+int cnt2[20];
+String str1[20] = "";
+int index = 0;
+char tmp;
+int inTurn = 0;
+
+int count = 5;
+//int max_Retries = 5;
+
+char buffer2[5][length];
+
+
+void setup() {
+
+	Serial.begin(9600);
+	Serial.println("SPI UART on WiFly Shield terminal tool");
+	Serial.println("--------------------------------------");  
+	Serial.println();
+	Serial.println("This is a tool to help you troubleshoot problems with the WiFly shield.");
+	Serial.println("For consistent results unplug & replug power to your Arduino and WiFly shield.");
+	Serial.println("(Ensure the serial monitor is not open when you remove power.)");  
+	Serial.println();
+
+	Serial.println("Attempting to connect to SPI UART...");
+	SpiSerial.begin();
+	Serial.println("Connected to SPI UART.");
+	Serial.println();
+
+	Serial.println(" * Use $$$ (with no line ending) to enter WiFly command mode. (\"CMD\")");
+	Serial.println(" * Then send each command followed by a carriage return.");
+	Serial.println();
+
+	Serial.println("Waiting for input.");
+	Serial.println();    
+
+	pinMode(ledPin, OUTPUT);
+	pinMode(inPin, INPUT);  
+}
+
+
+void loop() {
+
+
+	val = digitalRead(inPin);
+
+	if(val != lastButtonState){
+		if(!val){
+			sendToProxy();
+		}
+	}
+	lastButtonState = val;
+
+	char rac;
+	while(SpiSerial.available())
+	{
+		rac = SpiSerial.read();
+		Serial.println(rac);
+		if(inTurn > 0)
+			inTurn += 1;
+		if(rac == 'T')
+		{
+
+			inTurn = 1;
+		}
+		if(inTurn == 6)
+		{
+			if(rac == 'N')
+				result = true;
+			if(rac == 'F')
+				result = false;
+			if(result){
+				Serial.println("TURNON");
+				digitalWrite(ledPin, HIGH);
+			}
+			if(!result){
+				Serial.println("TURNOF");
+				digitalWrite(ledPin, LOW);
+			}
+
+
+			inTurn = 0;
+			break;
+		}
+
+	}
+
+
+
+
+
+
+
+
+}
+
+void sendToProxy(){
+	Serial.print("sendAlll()");   
+	SpiSerial.flush();
+	SpiSerial.write("REQ:3456356578:Doorbell\n*");     
+
+}
+
+
+
+
+
+void readFromRom(){
+	address = 0;
+	while(address != bytesToRead){
+		for(int j = 0 ; j < Retries ; j++){
+			for(int k = 0; k < length; k++){
+				buffer2[j][k] = EEPROM.read(address);
+				address++;    
+			}
+
+		}
+	}
+}
+void writeToRom(){
+	address = 0;
+	for(int i = 0; i  < Retries; i++){
+		for(int j = 0; j < length; j++){
+			EEPROM.write(address++,buffer[i]);
+		}
+	}
+}
