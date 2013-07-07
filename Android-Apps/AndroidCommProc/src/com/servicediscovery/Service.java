@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import android.content.Intent;
 
 public class Service implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -28,7 +27,7 @@ public class Service implements Serializable{
 	private String serviceType;
 	private Map<String,Action> actions;
 	private Map<String,Trigger> triggers;
-	private List<String> triggersGenerated;
+	private LinkedList<String> triggersGenerated;
 	// property name and the property object
 	private Map<String,Property> properties;
 
@@ -52,21 +51,28 @@ public class Service implements Serializable{
 	public void setServiceType(String serviceType) {
 		this.serviceType = serviceType;
 	}
-	public Set<Action> getActions() {
+	public Map<String,Action> getActions() {
 		return actions;
 	}
-	public void setActions(Set<Action> actions) {
-		this.actions = actions;
-	}
-	public Set<Trigger> getTrigger() {
+
+	public Map<String,Trigger> getTriggers() {
 		return triggers;
 	}
-	public void setTrigger(Set<Trigger> trigger) {
-		this.triggers = trigger;
+
+	public Action getAction(String actionName) {
+		return actions.get(actionName);
+	}
+
+	public Trigger getTrigger(String triggerName) {
+		return triggers.get(triggerName);
 	}
 
 	public void addAction(Action action) {
-		actions.add(action);
+		actions.put(action.getActionTag(),action);
+	}
+
+	public Action isActionPresent(String actionTag) {
+		return actions.get(actionTag);
 	}
 
 	public Map<String,Property> getProperties() {
@@ -82,37 +88,38 @@ public class Service implements Serializable{
 	}
 
 	public void addTrigger(Trigger trigger) {
-		triggers.add(trigger);
-		public void addTriggerGenerated(String trigger) {
-			triggersGenerated.add(trigger);
-		}
-
-		public List<String> getTriggerGenerated() {
-			return triggersGenerated;
-		}
-		
-		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
-			if(properties.get(propertyName) != null)
-			{
-				if(properties.get(propertyName).match(propertyAttributes))
-					return true;
-				else
-					return false;
-			}
-			return false;
-		}
-
-		public Trigger isTriggerPresent(String triggerName) {
-			return triggers.get(triggerName);
-		}
-
-		public Property getProperty(String propertyName) {
-			return properties.get(propertyName);
-		}
-		
-		public void setProperty(String propertyName, Property property) {
-			properties.put(propertyName, property);
-		}
-		
+		triggers.put(trigger.getTriggerTag(),trigger);
 	}
+
+	public void addTriggerGenerated(String trigger) {
+		triggersGenerated.add(trigger);
+	}
+
+	public List<String> getTriggerGenerated() {
+		return triggersGenerated;
+	}
+
+	public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
+		if(properties.get(propertyName) != null)
+		{
+			if(properties.get(propertyName).match(propertyAttributes))
+				return true;
+			else
+				return false;
+		}
+		return false;
+	}
+
+	public Trigger isTriggerPresent(String triggerName) {
+		return triggers.get(triggerName);
+	}
+
+	public Property getProperty(String propertyName) {
+		return properties.get(propertyName);
+	}
+
+	public void setProperty(String propertyName, Property property) {
+		properties.put(propertyName, property);
+	}
+
 }
