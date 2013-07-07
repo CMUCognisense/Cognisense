@@ -62,7 +62,7 @@ public class MusicServer {
 		}
 		
 		Message msg = new Message(serviceId);
-		//msg.addServiceId((String)srcServiceId);
+		msg.addServiceId((String)srcServiceId);
 		msg.addTrigger("listSongs", songList.toString());
 		sdl.sendMessage(msg);
 		
@@ -81,7 +81,7 @@ public class MusicServer {
 		}
         
         Message msg = new Message(serviceId);
-        //msg.addServiceId((String)srcServiceId);
+        msg.addServiceId((String)srcServiceId);
         msg.addTrigger("serverStarted", sdl.getIpAddress()+":" + newPortNum);
         sdl.sendMessage(msg);
         
@@ -93,7 +93,7 @@ public class MusicServer {
 		
 		Message message = new Message(serviceId);
         message.addTrigger("getInfo", sdl.getInfo(serviceId));
-        //message.addServiceId((String)srcServiceId);
+        message.addServiceId((String)srcServiceId);
         sdl.sendMessage(message);
 		
 	}

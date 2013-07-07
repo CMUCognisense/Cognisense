@@ -8,6 +8,7 @@ import servicediscovery.ServiceDiscoveryLayer;
 
 public class SpeakerController {
 	static String serviceId;
+	static String serviceId2;
 	static ServiceDiscoveryLayer sdl;
 	static int getInfo = 0;
 	static String chosenSpeaker;
@@ -23,8 +24,8 @@ public class SpeakerController {
 		sdl.registerTriggers(serviceId, "locationReceived", "getLocation", SpeakerController.class);
 		
 		// acton of the location service
-		serviceId = sdl.registerNewService("LocationService");
-		sdl.registerActions(serviceId, "sendLocation", "sendLocation", SpeakerController.class);
+		serviceId2 = sdl.registerNewService("LocationService");
+		sdl.registerActions(serviceId2, "sendLocation", "sendLocation", SpeakerController.class);
 		// it also generates one trigger on location changed
 		
 		Message message;
@@ -74,7 +75,7 @@ public class SpeakerController {
 	public void serverStarted(Object actionInput, Object srcServiceId) {
 		System.out.println("The server was started starting speaker at "+(String)actionInput);
 		Message message = new Message(serviceId);
-		//message.addServiceId(chosenSpeaker);
+		message.addServiceId(chosenSpeaker);
         message.addAction("play",(String)actionInput);
         sdl.sendMessage(message);
 		
@@ -83,15 +84,16 @@ public class SpeakerController {
 	public void locationReceived(Object actionInput, Object srcServiceId) {
 		System.out.println("Location received");
 		String[] location = ((String)actionInput).split("\\+");
+		
 		Message message = new Message(serviceId);
         message.addAction("getInfo");
         message.addServiceType("Speaker");
-//        message.addProperty("Location");
-//        message.addPropertyValue("Location", "HOME", location[0]);
-//        message.addPropertyValue("Location", "FLOOR", location[1]);
-//        message.addPropertyValue("Location", "ROOM", location[2]);
-//        message.addPropertyValue("Location", "INROOM", location[3]);
-//        message.addPropertyValue("Location", "USERTAG", location[4]);
+        message.addProperty("Location");
+        message.addPropertyValue("Location", "HOME", location[0]);
+        message.addPropertyValue("Location", "FLOOR", location[1]);
+        message.addPropertyValue("Location", "ROOM", location[2]);
+        message.addPropertyValue("Location", "INROOM", location[3]);
+        message.addPropertyValue("Location", "USERTAG", location[4]);
         sdl.sendMessage(message);
         getInfo = 0;
 		
@@ -102,9 +104,10 @@ public class SpeakerController {
 		
 		if(((String)actionInput).equals("Parth"))
 		{
-			Message msg = new Message(serviceId);
+			Message msg = new Message(serviceId2);
 			msg.addTrigger("getLocation", "home+one+bedroom+Top+onfloor");
-			//msg.addServiceId((String)srcServiceId);
+			System.out.println("The src service id is " + (String)srcServiceId);
+			msg.addServiceId((String)srcServiceId);
 			sdl.sendMessage(msg);
 		}
 	}
