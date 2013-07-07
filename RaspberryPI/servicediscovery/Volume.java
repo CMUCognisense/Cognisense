@@ -18,7 +18,7 @@ public class Volume extends Property{
 	}
 	@Override
 	public String printProperty() {
-		return "PROPERTYNAME-"+name+",LEVEL-"+level;
+		return "PROPERTYNAME-"+getName()+",LEVEL-"+level;
 	}
 
 }

@@ -12,6 +12,7 @@ public class SpeakerController {
 	static ServiceDiscoveryLayer sdl;
 	static int getInfo = 0;
 	static String chosenSpeaker;
+	static String serverPort;
 	
 	public static void main(String[] args) throws Exception{
 		
@@ -36,15 +37,35 @@ public class SpeakerController {
         message.addAction("setLocation","home+one+bedroom+Top+onfloor");
         sdl.sendMessage(message);
         
-		Console console = System.console();
-		String input = console.readLine("Play or stop:");
-			
-		message = new Message(serviceId);
-        message.addAction("sendLocation","Parth");
-        sdl.sendMessage(message);
+        
+		playOrStop();
         
 	}	
 
+	public static void playOrStop() {
+		Console console = System.console();
+		String input = console.readLine("play or stop:");
+		if(input.equals("play"))
+		{
+			Message message = new Message(serviceId);
+			message.addAction("sendLocation","Parth");
+			sdl.sendMessage(message);
+		}
+		else if(input.equals("stop"))
+		{
+			Message message = new Message(serviceId);
+			message.addServiceType("Speaker");
+			message.addAction("stop");
+			sdl.sendMessage(message);
+			
+			message = new Message(serviceId);
+			message.addServiceType("MusicServer");
+			message.addAction("stopServer", serverPort);
+			sdl.sendMessage(message);
+			
+			playOrStop();
+		}
+	}
 	// trigger listner for the server config 
 	public void printInfo(Object actionInput, Object srcServiceId) {
 		System.out.println("Speaker is chosen now choose the song");
@@ -67,13 +88,16 @@ public class SpeakerController {
 		String input = console.readLine("Select a song from the list\n"+Arrays.toString(list)+"\n>");
 		
 		Message msg = new Message(serviceId);
-		msg.addAction("startServer", "Roobaroo_RANG_DE_BASANTI.mp3");
+		msg.addAction("startServer", input);
 		sdl.sendMessage(msg);
+		playOrStop();
+		
 	}
 	
 	//	trigger listner for speaker config
 	public void serverStarted(Object actionInput, Object srcServiceId) {
 		System.out.println("The server was started starting speaker at "+(String)actionInput);
+		serverPort = ((String)actionInput).split(":")[1];
 		Message message = new Message(serviceId);
 		message.addServiceId(chosenSpeaker);
         message.addAction("play",(String)actionInput);

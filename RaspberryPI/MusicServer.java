@@ -100,11 +100,13 @@ public class MusicServer {
 	
 	public void stopServer(Object actionInput, Object srcServiceId) {
 		System.out.println("Killing server on port "+(String)actionInput);
-		String[] commands = new String[] {"python","vlcScript/kill.py", (String)actionInput};
-        try {
-			Process p = Runtime.getRuntime().exec(commands);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(actionInput != null) {
+			String[] commands = new String[] {"python","vlcScript/kill.py", (String)actionInput};
+			try {
+				Process p = Runtime.getRuntime().exec(commands);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

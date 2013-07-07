@@ -22,10 +22,10 @@ public class Location extends Property {
 
 	// a map of home name and location inside the home name. 
 	Map<String,SubLocation> locations;
-	public boolean DEBUG = true;
+	public boolean DEBUG = false;
 	public Location(){
 		locations = new HashMap<String, Location.SubLocation>();
-		name = "Location";
+		setName("Location");
 	}
 	
 	public void addLocation(String home, String floor, String room, String inRoom, String userTag) {
@@ -34,19 +34,18 @@ public class Location extends Property {
 		
 		SubLocation subL = new SubLocation(floor,room,inRoom,userTag);
 		if(home!=null)
-			locations.put(home.toLowerCase(),subL);
-		
-		if(DEBUG) System.out.println("After adding " + locations.toString());
-		
+			locations.put(home.toLowerCase(),subL);		
 	}
 	
 	@Override
 	public boolean match(Map<String,String> queryProperties) {
-		
+				
 		// if the property name of the object is the same as your property name
-		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals(name))
+		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals(getName()))
+		{
+			if(DEBUG)System.out.println("Property Name is "+getName()+" while in message name is "+queryProperties.get("PROPERTYNAME"));
 			return false;
-		
+		}
 		// if the service has this home in the location object then get
 		// its sublocation else return false.
 		String homeName = queryProperties.get("HOME").toLowerCase();

@@ -29,6 +29,7 @@ public class Service {
 		private List<String> triggersGenerated;
 		// property name and the property object
 		private Map<String,Property> properties;
+		private boolean DEBUG = true;
 		
 		
 		public Service() {
@@ -83,7 +84,7 @@ public class Service {
 		}
 		
 		public void addProperties(Property property) {
-			properties.put(property.name, property);
+			properties.put(property.getName(), property);
 		}
 		
 		public void addTrigger(Trigger trigger) {
@@ -99,6 +100,7 @@ public class Service {
 		}
 		
 		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
+			
 			if(properties.get(propertyName) != null)
 			{
 				if(properties.get(propertyName).match(propertyAttributes))

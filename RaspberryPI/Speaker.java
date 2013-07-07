@@ -13,17 +13,42 @@ public class Speaker {
 		sdl = new ServiceDiscoveryLayer(true, false);
 		sdl.registerApp(new Speaker());
 		serviceId = sdl.registerNewService("Speaker");
-		sdl.addLocationProperty(serviceId);
 		sdl.registerActions(serviceId, "setLocation","setLocation", Speaker.class);
 		sdl.registerActions(serviceId, "startPlaying","play", Speaker.class);
 		sdl.registerActions(serviceId, "stopPlaying","stop", Speaker.class);
 		sdl.registerActions(serviceId, "getInfo", "getInfo", Speaker.class);
-		sdl.addProperty(serviceId, new State("Stop"));
+		sdl.addProperty(serviceId, new State("Stop"));		
+		sdl.addLocationProperty(serviceId);
 		
+		Message message = new Message(serviceId);
+		message.addServiceType("Speaker");
+        message.addAction("setLocation","home+one+bedroom+Top+onfloor");
+        sdl.sendMessage(message);
+		
+		
+		message = new Message(serviceId);
+        message.addAction("getInfo");
+        message.addServiceType("Speaker");
+        message.addProperty("Location");
+        message.addPropertyValue("Location", "HOME", "home");
+        message.addPropertyValue("Location", "FLOOR", "one");
+        message.addPropertyValue("Location", "ROOM", "bedroom");
+        message.addPropertyValue("Location", "INROOM", "Top");
+        message.addPropertyValue("Location", "USERTAG", "onfloor");
+        sdl.sendMessage(message);
+
+        message = new Message(serviceId);
+        message.addAction("getInfo");
+        message.addServiceType("Speaker");
+        message.addProperty("State");
+        message.addPropertyValue("State", "VALUE", "Stop");
+        sdl.sendMessage(message);
+        
 	}
 
 	
 	public void setLocation(Object actioninput, Object srcServiceId) {
+		System.out.println("In Set Location");
 		String[] location = ((String)actioninput).split("\\+");
 		sdl.addLocationValue(serviceId, location[0], location[1], location[2], location[3], location[4]);
 	}
@@ -40,6 +65,8 @@ public class Speaker {
 			e.printStackTrace();
 		}
 
+        sdl.addProperty(serviceId, new State("Playing"));
+        
 	}
 	
 	public void stopPlaying(Object actioninput, Object srcServiceId) {
@@ -51,15 +78,16 @@ public class Speaker {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        sdl.addProperty(serviceId, new State("Stop"));
 
 	}
 	
 	public void getInfo(Object actionInput, Object srcServiceId) {
 		System.out.println("GiveInfo is called " + (String)actionInput + (String)srcServiceId +" Info is\n" + 
-				sdl.getProperties(serviceId).get("Location").printProperty());
+				sdl.getInfo(serviceId));
 		
 		Message message = new Message(serviceId);
-        message.addTrigger("getInfo", sdl.getProperties(serviceId).get("Location").printProperty());
+        message.addTrigger("getInfo", sdl.getInfo(serviceId));
         message.addServiceId((String)srcServiceId);
         sdl.sendMessage(message);
 		

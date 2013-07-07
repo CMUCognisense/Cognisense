@@ -40,8 +40,8 @@ public class TestScheme {
         message.addAction("getInfo","input2 ");
         message.addServiceType("Test");
         message.addServiceId(serviceId3);
-		message.addProperty(Brightness.name);
-		message.addPropertyValue(Brightness.name, "VALUE", "10");
+		message.addProperty("Brightness");
+		message.addPropertyValue("Brightness", "VALUE", "10");
         sdl.sendMessage(message);
 
 
@@ -58,7 +58,7 @@ public class TestScheme {
         message.addServiceType("Test2");
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
-        message.addProperty(Brightness.name);
+        message.addProperty("Brightness");
         sdl.sendMessage(message);
 
         message = new Message(serviceId);
@@ -67,8 +67,8 @@ public class TestScheme {
         message.addServiceType("Test2");
         message.addServiceType("Test3");
         message.addServiceId(serviceId3);
-        message.addProperty(Brightness.name);
-		message.addPropertyValue(Brightness.name, "VALUE", "10");
+        message.addProperty("Brightness");
+		message.addPropertyValue("Brightness", "VALUE", "10");
 		message.addProperty("Location");
 		message.addPropertyValue("Location", "HOME", "MyHome");
 		message.addPropertyValue("Location", "FLOOR", "one");
