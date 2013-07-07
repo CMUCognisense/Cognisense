@@ -17,7 +17,8 @@ public class LEDStatus extends Property {
 
 	public LEDStatus(String status) {
 		this.status = status;
-		// setName("LEDStatus");
+		setStatus(status);
+		setName("LEDStatus");
 	}
 
 	@Override
@@ -35,10 +36,10 @@ public class LEDStatus extends Property {
 			return false;
 	}
 
-	@Override
-	// public String printProperty() {
-	// return "PROPERTYNAME-" + getName() + ",status-" + status + ",";
-	// }
+	public String printProperty() {
+		return "PROPERTYNAME-" + getName() + ",status-" + status + ",";
+	}
+
 	public String getStatus() {
 		return status;
 	}
