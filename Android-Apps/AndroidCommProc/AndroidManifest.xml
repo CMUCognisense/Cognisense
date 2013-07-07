@@ -7,11 +7,14 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission android:name="com.commproc.provider.READ_DATABASE"/>
+	<permission android:name="com.commproc.provider.WRITE_DATABASE"/>
 
     <application
         android:allowBackup="true"
@@ -27,24 +30,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service android:name="CommService">
+
+        <service android:name="CommService" >
             <intent-filter>
-				<action android:name="CS"/>
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>				 
-	    </service> 
-        
-        <receiver android:name="CommServiceReceiver">
-		    <intent-filter>  
-               <action android:name="android.intent.action.BOOT_COMPLETED" /> 
-               <category android:name="android.intent.category.LAUNCHER" /> 
-            </intent-filter> 
-			<intent-filter>
-				<action android:name="commservice"/>
-				<category android:name="android.intent.category.DEFAULT" />  
-			</intent-filter>				
+                <action android:name="CS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="CommServiceReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="commservice" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </receiver>
+
+        <provider
+            android:name="RegistrationProvider"
+            android:authorities="com.commproc.provider"
+            android:exported="true"
+            android:readPermission="com.commproc.provider.READ_DATABASE"
+            android:writePermission="com.commproc.provider.WRITE_DATABASE" />
     </application>
 
 </manifest>
