@@ -244,7 +244,7 @@ public class MulticastLayer {
 					while (address.hasMoreElements()) {
 						InetAddress addr = address.nextElement();
 						if (!addr.isLoopbackAddress()
-								&& addr.isSiteLocalAddress()
+								//&& addr.isSiteLocalAddress()
 								&& !(addr.getHostAddress().indexOf(":") > -1)) {
 							currentHostIpAddress = addr.getHostAddress();
 							byte[] mac = ni.getHardwareAddress();

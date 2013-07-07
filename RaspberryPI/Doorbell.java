@@ -6,6 +6,7 @@ public class Doorbell {
 	static String serviceId;
 	static ServiceDiscoveryLayer sdl;
 
+
 	public static void main(String[] args) throws Exception {
 		sdl = new ServiceDiscoveryLayer(true, false);
 		sdl.registerApp(new Doorbell());
@@ -34,3 +35,4 @@ public class Doorbell {
 	}
 
 }
+

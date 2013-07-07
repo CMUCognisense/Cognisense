@@ -20,7 +20,7 @@ public class Brightness extends Property {
 	
 	public Brightness(int value) {
 		this.value = value;
-		name = "Brightness";
+		setName("Brightness");
 	}
 	
 	@Override
@@ -40,7 +40,7 @@ public class Brightness extends Property {
 
 	@Override
 	public String printProperty() {
-		return "PROPERTYNAME-"+name+",VALUE-"+value+",";
+		return "PROPERTYNAME-"+getName()+",VALUE-"+value+",";
 	}
 	
 	public int getValue() {

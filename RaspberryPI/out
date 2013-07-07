@@ -1,0 +1,36 @@
+Opened database successfully
+Started the Multicast layer
+Previous name is nullNew name is State
+Adding property PROPERTYNAME-State,VALUE-Stop,
+PROPERTYNAME-State,VALUE-Stop,
+Previous name is StateNew name is Location
+Adding property PROPERTYNAME-Location,
+PROPERTYNAME-Location,VALUE-Stop,
+PROPERTYNAME-Location,
+Sending message {"serviceID":[],"serviceTypes":["Speaker"],"properties":{},"action":"setLocation","actionInput":"home+one+bedroom+Top+onfloor","srcServiceID":"b5337a34-8676-4052-bb3b-a3348dcc195a"}
+Processing message
+In Add Location
+ Location in service is PROPERTYNAME-Location,
+After adding {home=one bedroom Top onfloor}
+Location before adding isPROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,
+Location after adding isPROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,
+Sending message {"serviceID":[],"serviceTypes":["Speaker"],"properties":{"Location":{"USERTAG":"onfloor","ROOM":"bedroom","PROPERTYNAME":"Location","HOME":"home","INROOM":"Top","FLOOR":"one"}},"action":"getInfo","srcServiceID":"b5337a34-8676-4052-bb3b-a3348dcc195a"}
+Processing message
+ matching properties for Location
+PROPERTYNAME-Location,VALUE-Stop,
+PROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,
+Location Match is called
+Checking Floor
+Checking room
+Checking inRoom
+Checking usertag
+GiveInfo is called nullb5337a34-8676-4052-bb3b-a3348dcc195a Info is
+PROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,
+Sending message {"serviceID":["b5337a34-8676-4052-bb3b-a3348dcc195a"],"serviceTypes":[],"properties":{},"triggerName":"getInfo","triggerData":"PROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,","srcServiceID":"b5337a34-8676-4052-bb3b-a3348dcc195a"}
+Processing message
+Sending message {"serviceID":[],"serviceTypes":["Speaker"],"properties":{"State":{"PROPERTYNAME":"State","VALUE":"Stop"}},"action":"getInfo","srcServiceID":"b5337a34-8676-4052-bb3b-a3348dcc195a"}
+Processing message
+ matching properties for State
+PROPERTYNAME-Location,VALUE-Stop,
+PROPERTYNAME-Location,HOME-home,FLOOR-one,ROOM-bedroom,INROOM-Top,USERTAG-onfloor,
+State match is called

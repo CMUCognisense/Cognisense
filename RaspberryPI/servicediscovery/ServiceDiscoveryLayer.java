@@ -115,8 +115,6 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 
 	public void addProperty(String serviceId, Property property) {
 		Service service = services.get(serviceId);
-		if (property.name == null)
-			property.name = property.getClass().getName();
 		service.addProperties(property);
 	}
 
@@ -130,7 +128,7 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		Service service = services.get(serviceId);
 		Location location = (Location) service.getProperty("Location");
 		location.addLocation(home, floor, room, inRoom, userTag);
-		service.setProperty("Location", location);
+		service.setProperty("Location", location);		
 	}
 
 	
@@ -309,4 +307,11 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		return builder.toString();
 	}
 
+	public String getIpAddress() {
+		return multicastLayer.getCurrentEnvironmentNetworkIp();
+
+	}
+
+	
+	
 }

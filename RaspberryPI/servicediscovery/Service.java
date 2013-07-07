@@ -12,6 +12,7 @@
 
 package servicediscovery;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class Service {
 		private List<String> triggersGenerated;
 		// property name and the property object
 		private Map<String,Property> properties;
+		private boolean DEBUG = true;
 		
 		
 		public Service() {
@@ -82,7 +84,7 @@ public class Service {
 		}
 		
 		public void addProperties(Property property) {
-			properties.put(property.name, property);
+			properties.put(property.getName(), property);
 		}
 		
 		public void addTrigger(Trigger trigger) {
@@ -98,6 +100,7 @@ public class Service {
 		}
 		
 		public boolean isPropertyMatching(String propertyName, Map<String, String> propertyAttributes) {
+			
 			if(properties.get(propertyName) != null)
 			{
 				if(properties.get(propertyName).match(propertyAttributes))
@@ -120,4 +123,17 @@ public class Service {
 			properties.put(propertyName, property);
 		}
 		
+		public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+			Service service = new Service();
+			service.setServiceType("Speaker");
+			String serviceId = "12-323-42343-343-232";
+			service.setServiceid(serviceId);
+			Method appMethod = Service.class.getMethod("isTriggerPresent", String.class);
+			Action action = new Action(appMethod, "isTriggerPresent");
+			service.addAction(action);
+			Location location = new Location();
+			service.addProperties(location);
+			
+			
+		}		
 	}
