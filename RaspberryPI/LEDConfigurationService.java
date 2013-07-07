@@ -14,7 +14,13 @@ public class LEDConfigurationService {
 		sdl.registerApp(new LEDConfigurationService());
 		serviceId = sdl.registerNewService("LEDConfigurationService");
 		sdl.addLocationProperty(serviceId);
+		sdl.registerTriggers(serviceId, "doorbellTriggerMethod", "onDoorbell",
+				LEDConfigurationService.class);
 
+	}
+
+	public void doorbellTriggerMethod(Object actionInput, Object srcServiceId) {
+		System.out.println("DDD");
 		Message message = new Message(serviceId);
 		message.addAction("TURNON");
 		message.addServiceType("LED");
