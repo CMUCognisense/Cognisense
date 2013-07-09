@@ -27,7 +27,7 @@ public class CommService extends android.app.Service{
 		// get an instance of the service discovery layer and
 		// the receiver thread will start
 		if(this.myServiceDiscovery == null){
-			myServiceDiscovery = new SdlCommon(this, true,false);
+			myServiceDiscovery = new SdlCommon(this, true, false);
 		}
 	}
 	
@@ -48,13 +48,6 @@ public class CommService extends android.app.Service{
 				Log.e(TAG, "SendAll Command");
 				String msg = (String)intent.getSerializableExtra("message");
 				myServiceDiscovery.sendMessage(msg);
-			}
-			// if the application wants to register for the service
-			if (command.equals("REGISTER")) {
-				Log.e(TAG, "Register Command");
-				//TODO get the intentfilter and the service object from the intent
-				String intentfilter = intent.getStringExtra("intentfilter");
-				myServiceDiscovery.registerNewService(intentfilter);
 			}
 		}
 		return super.onStartCommand(intent, flags, startId);

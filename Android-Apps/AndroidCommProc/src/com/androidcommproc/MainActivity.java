@@ -24,18 +24,15 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				Intent serviceIntent = new Intent(MainActivity.this, CommService.class);
 				startService(serviceIntent);
-				//stopService(serviceIntent);
 			}
 		});
 		
+
 		close = (Button)findViewById(R.id.main_close);
 		close.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//Intent serviceIntent = new Intent(MainActivity.this, CommService.class);
-				//stopService(serviceIntent);
 				finish();
 			}
 		});

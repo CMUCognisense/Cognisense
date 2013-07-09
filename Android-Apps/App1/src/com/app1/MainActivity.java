@@ -74,6 +74,7 @@ public class MainActivity extends Activity {
 		sdl.registerApp(this, "DoorbellApp", getApplicationContext());
 		// register the service "DoorbellApp" whose intent filter name is "DoorbellApp"
 		serviceId = sdl.registerNewService("DoorbellApp");
+		Log.e(TAG, serviceId);
 
 		//TODO location setting is not done yet
 		sdl.addLocation();
