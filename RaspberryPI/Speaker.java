@@ -35,6 +35,8 @@ public class Speaker {
         message.addPropertyValue("Location", "ROOM", "bedroom");
         message.addPropertyValue("Location", "INROOM", "Top");
         message.addPropertyValue("Location", "USERTAG", "onfloor");
+        message.addProperty("State");
+        message.addPropertyValue("State", "VALUE", "Stop");
         sdl.sendMessage(message);
 
         message = new Message(serviceId);
