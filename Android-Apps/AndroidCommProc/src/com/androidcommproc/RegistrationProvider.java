@@ -20,11 +20,23 @@ public class RegistrationProvider extends ContentProvider{
 
 	private static final String AUTHORITY = "com.commproc.provider";
 	private static final String INFO_BASE_PATH = "INFO";
+	private static final String HOME_BASE_PATH = "HOME";
+	private static final String FLOOR_BASE_PATH = "FLOOR";
+	private static final String ROOM_BASE_PATH = "ROOM";
+	private static final String USERTAG_BASE_PATH = "USERTAG";
 	public static final Uri INFO_CONTENT_URI = Uri.parse("content://com.commproc.provider/" + INFO_BASE_PATH);
+	public static final Uri HOME_CONTENT_URI = Uri.parse("content://com.commproc.provider/" + HOME_BASE_PATH);
+	public static final Uri FLOOR_CONTENT_URI = Uri.parse("content://com.commproc.provider/" + FLOOR_BASE_PATH);
+	public static final Uri ROOM_CONTENT_URI = Uri.parse("content://com.commproc.provider/" + ROOM_BASE_PATH);
+	public static final Uri USERTAGE_CONTENT_URI = Uri.parse("content://com.commproc.provider/" + USERTAG_BASE_PATH);
 	public static final int INFOS = 1;
 	public static final int INFO = 2;	
+	public static final int HOMES = 3;
+	public static final int FLOORS = 4; 
+	public static final int ROOMS = 5;
+	public static final int USERTAGS = 6;
 	private static final UriMatcher uriMatcher;
-	private	DatabaseHelper dbHelper; 
+	private	DatabaseHelper dbHelper;
 
 	// This is a uri matcher. New matching uri can be added here.
 	// INFO and INFOS are the return code for the matching
@@ -32,6 +44,10 @@ public class RegistrationProvider extends ContentProvider{
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(AUTHORITY, INFO_BASE_PATH, INFOS);
 		uriMatcher.addURI(AUTHORITY, INFO_BASE_PATH + "/*", INFO);
+		uriMatcher.addURI(AUTHORITY, HOME_BASE_PATH, HOMES);
+		uriMatcher.addURI(AUTHORITY, FLOOR_BASE_PATH, FLOORS);
+		uriMatcher.addURI(AUTHORITY, ROOM_BASE_PATH, ROOMS);
+		uriMatcher.addURI(AUTHORITY, USERTAG_BASE_PATH, USERTAGS);
 	}
 
 	@Override
@@ -55,16 +71,29 @@ public class RegistrationProvider extends ContentProvider{
 	 */
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
+		String tableName;
 		switch (uriMatcher.match(uri)) {
 		case INFOS:
-			//do nothing
+			tableName = DatabaseHelper.INFO_TABLE;
+			break;
+		case HOMES:
+			tableName = DatabaseHelper.HOME_TABLE;
+			break;
+		case FLOORS:
+			tableName = DatabaseHelper.FLOOR_TABLE;
+			break;
+		case ROOMS:
+			tableName = DatabaseHelper.ROOM_TABLE;
+			break;
+		case USERTAGS:
+			tableName = DatabaseHelper.USERTAG_TABLE;
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
 		}
-		long id = dbHelper.getWritableDatabase().insert(DatabaseHelper.INFO_TABLE, null, values);
+		long id = dbHelper.getWritableDatabase().insert(tableName, null, values);
 
-		return Uri.parse(INFO_CONTENT_URI + "/" + id);
+		return Uri.parse("content://com.commproc.provider/" + tableName + "/" + id);
 	}
 
 	/**
@@ -87,14 +116,27 @@ public class RegistrationProvider extends ContentProvider{
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(DatabaseHelper.INFO_TABLE);
 		
 		switch (uriMatcher.match(uri)) {
 		case INFOS:
+			queryBuilder.setTables(DatabaseHelper.INFO_TABLE);
 			break;
 		case INFO:
+			queryBuilder.setTables(DatabaseHelper.INFO_TABLE);
 			queryBuilder.appendWhere("SERVICETYPE='"
 					+ uri.getLastPathSegment() + "'");
+			break;
+		case HOMES:
+			queryBuilder.setTables(DatabaseHelper.HOME_TABLE);
+			break;
+		case FLOORS:
+			queryBuilder.setTables(DatabaseHelper.FLOOR_TABLE);
+			break;
+		case ROOMS:
+			queryBuilder.setTables(DatabaseHelper.ROOM_TABLE);
+			break;
+		case USERTAGS:
+			queryBuilder.setTables(DatabaseHelper.USERTAG_TABLE);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
