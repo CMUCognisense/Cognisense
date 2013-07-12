@@ -2,6 +2,7 @@ package com.servicediscovery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.servicediscovery.Action;
 import com.servicediscovery.Service;
 import com.servicediscovery.Trigger;
 import com.servicediscovery.Message;
+import com.util.DatabaseHelper;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -153,6 +155,126 @@ public class ServiceDiscoveryLayer{
 		// sets the name and Method of the trigger
 		Trigger trigger = new Trigger(appMethod, triggerName!=null?triggerName:methodName);
 		service.addTrigger(trigger);
+	}
+
+	/**
+	 * Add the string to the home table
+	 * @param home
+	 */
+	public void addHome(String home){
+		ContentResolver resolver = this.appContext.getContentResolver();
+        Uri insertUri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.HOME_TABLE);
+		ContentValues values = new ContentValues();
+		values.put("HOME", home);
+        Uri uri = resolver.insert(insertUri, values);
+        Log.i(TAG, "new home, " + uri.toString());
+	}
+
+	/**
+	 * Add the string to the floor table
+	 * @param floor
+	 */
+	public void addFloor(String floor){
+		ContentResolver resolver = this.appContext.getContentResolver();
+        Uri insertUri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.FLOOR_TABLE);
+		ContentValues values = new ContentValues();
+		values.put("FLOOR", floor);
+        Uri uri = resolver.insert(insertUri, values);
+        Log.i(TAG, "new floor, " + uri.toString());
+	}
+
+	/**
+	 * Add the string to the room table
+	 * @param room
+	 */
+	public void addRoom(String room){
+		ContentResolver resolver = this.appContext.getContentResolver();
+        Uri insertUri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.ROOM_TABLE);
+		ContentValues values = new ContentValues();
+		values.put("ROOM", room);
+        Uri uri = resolver.insert(insertUri, values);
+        Log.i(TAG, "New room, " + uri.toString());
+	}
+	
+	/**
+	 * Add the string to the user tag table
+	 * @param usertag
+	 */
+	public void addUsertag(String usertag){
+		ContentResolver resolver = this.appContext.getContentResolver();
+        Uri insertUri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.USERTAG_TABLE);
+		ContentValues values = new ContentValues();
+		values.put("USERTAG", usertag);
+        Uri uri = resolver.insert(insertUri, values);
+        Log.i(TAG, "New user tag, " + uri.toString());
+	}
+
+	/**
+	 * Get the list of home strings from the database
+	 * @return
+	 */
+	public ArrayList<String> getHomes(){
+		ArrayList<String> homes = new ArrayList<String>(); 
+		ContentResolver contentResolver = appContext.getContentResolver();
+        Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.HOME_TABLE);
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+		while(cursor.moveToNext()){
+			String home = cursor.getString(cursor.getColumnIndex("HOME"));
+			homes.add(home);
+		}
+		cursor.close();
+		return homes;
+	}
+	
+	/**
+	 * Get the list of floor strings from the database
+	 * @return
+	 */
+	public ArrayList<String> getFloors(){
+		ArrayList<String> floors = new ArrayList<String>(); 
+		ContentResolver contentResolver = appContext.getContentResolver();
+        Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.FLOOR_TABLE);
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+		while(cursor.moveToNext()){
+			String floor = cursor.getString(cursor.getColumnIndex("FLOOR"));
+			floors.add(floor);
+		}
+		cursor.close();
+		return floors;
+	}
+	
+	/**
+	 * Get the list of room strings from the database
+	 * @return
+	 */
+	public ArrayList<String> getRooms(){
+		ArrayList<String> rooms = new ArrayList<String>(); 
+		ContentResolver contentResolver = appContext.getContentResolver();
+        Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.ROOM_TABLE);
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+		while(cursor.moveToNext()){
+			String room = cursor.getString(cursor.getColumnIndex("ROOM"));
+			rooms.add(room);
+		}
+		cursor.close();
+		return rooms;
+	}
+
+	/**
+	 * Get the list of usertag strings from the database
+	 * @return
+	 */
+	public ArrayList<String> getUsertags(){
+		ArrayList<String> usertags = new ArrayList<String>(); 
+		ContentResolver contentResolver = appContext.getContentResolver();
+        Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.USERTAG_TABLE);
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+		while(cursor.moveToNext()){
+			String usertag = cursor.getString(cursor.getColumnIndex("USERTAG"));
+			usertags.add(usertag);
+		}
+		cursor.close();
+		return usertags;
 	}
 
 	public void addProperty(Property property) {

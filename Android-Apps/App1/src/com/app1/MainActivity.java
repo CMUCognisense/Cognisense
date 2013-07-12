@@ -12,6 +12,10 @@
  */
 package com.app1;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import com.app1.R;
 import com.servicediscovery.Message;
 import com.servicediscovery.ServiceDiscoveryLayer;
@@ -64,6 +68,39 @@ public class MainActivity extends Activity {
 				sdl.sendMessage(message);
 			}
 		});
+		
+		Button test = (Button)findViewById(R.id.button2);
+		test.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				sdl.addHome("pc");
+				sdl.addHome("parth");
+				sdl.addFloor("1");
+				sdl.addFloor("2");
+				sdl.addFloor("3");
+				sdl.addFloor("4");
+				sdl.addRoom("bed");
+				sdl.addRoom("living");
+				sdl.addUsertag("window");
+				sdl.addUsertag("table");
+			}
+		});
+		
+		Button show = (Button)findViewById(R.id.button3);
+		show.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ArrayList<String> homes = sdl.getHomes();
+				ArrayList<String> floors = sdl.getFloors();
+				ArrayList<String> rooms = sdl.getRooms();
+				ArrayList<String> tags = sdl.getUsertags();
+				Log.e(TAG, homes.toString());
+				Log.e(TAG, floors.toString());
+				Log.e(TAG, rooms.toString());
+				Log.e(TAG, tags.toString());
+			}
+		});
+		
 	}
 
 	private void register() throws Exception{
