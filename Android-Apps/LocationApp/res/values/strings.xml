@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LocationApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">This is a Location Stubbing Application. Set the user name and the location below</string>
+
+</resources>
