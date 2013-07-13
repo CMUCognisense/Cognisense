@@ -323,7 +323,4 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 		return multicastLayer.getCurrentEnvironmentNetworkIp();
 
 	}
-
-	
-	
 }

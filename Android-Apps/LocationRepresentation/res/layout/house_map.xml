@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/hometext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint ="Enter home name"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Home" />
+
+    <EditText
+        android:id="@+id/floortext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter floor" >
+    </EditText>
+
+    <Button
+        android:id="@+id/floor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add floor" />
+
+    <EditText
+        android:id="@+id/roomtext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter rooms" />
+
+    <Button
+        android:id="@+id/room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Room" />
+
+    <Button
+        android:id="@+id/view"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:text="View Map" />
+
+</LinearLayout>
