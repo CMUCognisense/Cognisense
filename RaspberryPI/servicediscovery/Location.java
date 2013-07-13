@@ -155,25 +155,25 @@ public class Location extends Property {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("PROPERTYNAME-");
 		buffer.append("Location");
-		buffer.append(",");
+		buffer.append("@");
 		for(Entry<String,SubLocation> entry : locations.entrySet()) 
 		{
 			buffer.append("HOME-");
 			buffer.append(entry.getKey());
-			buffer.append(",");
+			buffer.append("@");
 
 			buffer.append("FLOOR-");
 			buffer.append(entry.getValue().floor);
-			buffer.append(",");
+			buffer.append("@");
 			buffer.append("ROOM-");
 			buffer.append(entry.getValue().room);
-			buffer.append(",");
+			buffer.append("@");
 			buffer.append("INROOM-");
 			buffer.append(entry.getValue().inRoom);
-			buffer.append(",");
+			buffer.append("@");
 			buffer.append("USERTAG-");
 			buffer.append(entry.getValue().userTag);
-			buffer.append(",");
+			buffer.append("@");
 		}
 		return buffer.toString();
 	}

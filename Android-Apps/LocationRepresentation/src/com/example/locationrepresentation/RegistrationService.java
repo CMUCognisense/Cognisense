@@ -131,26 +131,7 @@ public class RegistrationService extends android.app.Service{
 			// if the action input is null, then update the list
 			
 		}
-		if(selectToPlay == 1)
-		{
-			Log.d(TAG,"Speaker is chosen"+(String)srcServiceId+" now get the songs from the server");
-			chosenSpeaker = new String((String)srcServiceId);
-			selectToPlay = 0;
-			Message msg = new Message(serviceId);
-			msg.addAction("getSongs", null);
-			sdl.sendMessage(msg);
-		}
-		else if (locChange == 1)
-		{
-			locChange = 0;
-			Log.d(TAG,"Speaker is chosen"+(String)srcServiceId+" now play song again");
-			chosenSpeaker = new String((String)srcServiceId);
-			Message msg = new Message(serviceId);
-			msg.addServiceId(chosenSpeaker);
-			msg.addAction("play", serverIp+":"+serverPort);
-			sdl.sendMessage(msg);
-
-		}
+	
 	}
 
 }
