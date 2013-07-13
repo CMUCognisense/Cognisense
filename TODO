@@ -1,0 +1,6 @@
+1. Change the add location method inside the android service to be consistent with the service discovery layer. 
+2. have a base class that can take care of the intents and stuff basically the sdl.callMethod function shoud be taken care of
+3. When I want to change locations of two different users what happens is that the music app only has one location stored 
+	also it has a single trigger for the location changed Now if I put in other persons application then you 
+	can also see that there will be two triggers on the same locatoin changed. That will create a problem. 
+	You should remember to remove the previous trigger.

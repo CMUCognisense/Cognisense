@@ -30,7 +30,7 @@ public class SpeakerController {
 		sdl.registerTriggers(serviceId, "selectSong", "listSongs", SpeakerController.class);
 		sdl.registerTriggers(serviceId, "serverStarted", "serverStarted", SpeakerController.class);
 		sdl.registerTriggers(serviceId, "locationReceived", "getLocation", SpeakerController.class);
-		sdl.registerTriggers(serviceId, "changeOfLocation", "LocationChangedParth", SpeakerController.class);
+		sdl.registerTriggers(serviceId, "changeOfLocation", "LocationChanged", SpeakerController.class);
 
 		// acton of the location service
 		serviceId2 = sdl.registerNewService("LocationService");
@@ -63,9 +63,9 @@ public class SpeakerController {
         message.addAction("setLocation",location);
         sdl.sendMessage(message);
         
-		mylocation = console.readLine("Set your location:");
+		//mylocation = console.readLine("Set your location:");
         
-		playOrStop();
+		//playOrStop();
 	}	
 
 	public static void playOrStop() {
@@ -96,7 +96,7 @@ public class SpeakerController {
 			// This message s being sent by the location service
 			mylocation = console.readLine("Enter New Location:");
 			Message message = new Message(serviceId2);
-			message.addTrigger("LocationChangedParth", mylocation);
+			message.addTrigger("LocationChanged", "parth:"+mylocation);
 			sdl.sendMessage(message);
 		}
 	}
@@ -121,38 +121,40 @@ public class SpeakerController {
 	}
 
 	// trigger listner for location changed for parth
-	public void changeOfLocation(Object actionInput, Object srcServiceId) {
+	public void changeOfLocation(Object triggerData, Object srcServiceId) {
 		System.out.println("Location of parth has changed now");
-		String[] location = ((String)actionInput).split("\\+");
-		
-		Message message = new Message(serviceId);
-		message.addServiceId(chosenSpeaker);
-		message.addAction("stop");
-		sdl.sendMessage(message);
-		System.out.println("Stopping Previous Speaker");
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String[] data = ((String)triggerData).split(":");
+		if(data[0].compareToIgnoreCase("parth") == 0)
+		{
+			String[] location = data[1].split("\\+");
+			Message message = new Message(serviceId);
+			message.addServiceId(chosenSpeaker);
+			message.addAction("stop");
+			sdl.sendMessage(message);
+			System.out.println("Stopping Previous Speaker");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			System.out.println("Playing at New Speaker");
+			message = new Message(serviceId);
+			message.addAction("play",serverIp+":"+serverPort);
+			message.addServiceType("Speaker");
+			message.addProperty("Location");
+			message.addPropertyValue("Location", "HOME", location[0]);
+			message.addPropertyValue("Location", "FLOOR", location[1]);
+			message.addPropertyValue("Location", "ROOM", location[2]);
+			message.addPropertyValue("Location", "INROOM", location[3]);
+			message.addPropertyValue("Location", "USERTAG", location[4]);
+			sdl.sendMessage(message);
 		}
-		
-		System.out.println("Playing at New Speaker");
-		message = new Message(serviceId);
-        message.addAction("play",serverIp+":"+serverPort);
-        message.addServiceType("Speaker");
-        message.addProperty("Location");
-        message.addPropertyValue("Location", "HOME", location[0]);
-        message.addPropertyValue("Location", "FLOOR", location[1]);
-        message.addPropertyValue("Location", "ROOM", location[2]);
-        message.addPropertyValue("Location", "INROOM", location[3]);
-        message.addPropertyValue("Location", "USERTAG", location[4]);
-        sdl.sendMessage(message);
-		
 	}
 
 	
-	// trigger listner for the speaker config
+	// trigger listner for the song selection
 	public void selectSong(Object triggerData, Object srcServiceId) {
 		
 		String[] list = ((String)triggerData).split("&");
@@ -166,7 +168,7 @@ public class SpeakerController {
 		
 	}
 	
-	//	trigger listner for speaker config
+	//	trigger listner for server started
 	public void serverStarted(Object actionInput, Object srcServiceId) {
 		System.out.println("The server was started starting speaker at "+(String)actionInput);
 		serverIp = ((String)actionInput).split(":")[0];
