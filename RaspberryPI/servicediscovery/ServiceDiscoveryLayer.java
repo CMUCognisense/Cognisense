@@ -312,7 +312,12 @@ public class ServiceDiscoveryLayer implements MulticastReceive {
 				builder.append(",");
 			}
 			for( Property property: getProperties(serviceId).values())
+			{
 				builder.append(property.printProperty());
+				builder.append(",");
+			}
+				
+
 			
 		}
 		
