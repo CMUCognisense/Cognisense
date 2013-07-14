@@ -8,57 +8,101 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".LocationUI" >
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignParentBottom="true"
         android:text="Set Location" />
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView01"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp"
-        android:ems="10"
-        android:hint="myhome+one+bedroom+Top+window" />
-
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:text="User Name" />
+        android:text="@string/hello_world" />
 
     <EditText
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="45dp"
         android:ems="10"
         android:hint="Parth" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText1"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="17dp"
+        android:text="User Name"
+        android:textSize="15dp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/autoCompleteTextView1"
+        android:layout_below="@+id/autoCompleteTextView1"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="Floor" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/autoCompleteTextView2"
+        android:layout_below="@+id/autoCompleteTextView2"
+        android:ems="10"
+        android:hint="Room Name" />
 
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
+        android:layout_alignLeft="@+id/editText1"
         android:layout_below="@+id/editText1"
-        android:layout_marginTop="32dp"
-        android:text="Location" />
+        android:layout_marginTop="15dp"
+        android:text="Location"
+        android:textSize="15dp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView01"
+        android:layout_below="@+id/TextView01"
+        android:layout_marginTop="16dp"
+        android:completionThreshold="1"
+        android:ems="10"
+        android:hint="Home Name" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/autoCompleteTextView3"
+        android:layout_below="@+id/autoCompleteTextView3"
+        android:ems="10"
+        android:hint="InRoom" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/autoCompleteTextView4"
+        android:layout_below="@+id/autoCompleteTextView4"
+        android:ems="10"
+        android:hint="User Tag" />
 
 </RelativeLayout>

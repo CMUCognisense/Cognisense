@@ -52,7 +52,7 @@ public class Speaker {
 
 	
 	public void setLocation(Object actioninput, Object srcServiceId) {
-		System.out.println("In Set Location");
+		System.out.println("In Set Location "+(String)actioninput);
 		String[] location = ((String)actioninput).split("\\+");
 		
 		if(location.length!=5)

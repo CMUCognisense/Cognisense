@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class LocationService extends android.app.Service{
@@ -19,6 +20,8 @@ public class LocationService extends android.app.Service{
 	private ServiceDiscoveryLayer sdl = null;
 	private String serviceId = null;
 	private String TAG = "LocationService";
+	private LocalBroadcastManager broadcaster;
+
 
 
 
@@ -43,6 +46,9 @@ public class LocationService extends android.app.Service{
 			}
 			isRegistered = true;
 		}
+		
+		broadcaster = LocalBroadcastManager.getInstance(this);
+
 
 	}
 
@@ -72,7 +78,37 @@ public class LocationService extends android.app.Service{
 				Message message = new Message(serviceId);
 				message.addTrigger("LocationChanged",userName+":"+mylocation);
 				sdl.sendMessage(message);
-			}			
+			}
+			else if(command.equals("getHomes")) {
+				Intent intent1 = new Intent("UIINTENT");
+				intent1.putExtra("Location","Home");
+				intent1.putStringArrayListExtra("Values", sdl.getHomes());
+				broadcaster.sendBroadcast(intent1);		
+
+			}
+			else if(command.equals("getFloors")) {
+				Intent intent1 = new Intent("UIINTENT");
+				intent1.putExtra("Location","Floor");
+				intent1.putStringArrayListExtra("Values", sdl.getFloors());
+				broadcaster.sendBroadcast(intent1);		
+
+			}
+			else if(command.equals("getRooms")) {
+				Intent intent1 = new Intent("UIINTENT");
+				intent1.putExtra("Location","Room");
+				intent1.putStringArrayListExtra("Values", sdl.getRooms());
+				broadcaster.sendBroadcast(intent1);		
+
+			}
+			else if(command.equals("getUserTags")) {
+				Intent intent1 = new Intent("UIINTENT");
+				intent1.putExtra("Location","UserTag");
+				intent1.putStringArrayListExtra("Values", sdl.getUsertags());
+				broadcaster.sendBroadcast(intent1);		
+
+			}
+
+
 		}
 		else
 		{	// this means this is an intent from the ServiceDscoveryLayer 

@@ -22,7 +22,7 @@ public class Location extends Property {
 
 	// a map of home name and location inside the home name. 
 	Map<String,SubLocation> locations;
-	public boolean DEBUG = false;
+	public boolean DEBUG = true;
 	public Location(){
 		locations = new HashMap<String, Location.SubLocation>();
 		setName("Location");
@@ -31,7 +31,7 @@ public class Location extends Property {
 	public void addLocation(String home, String floor, String room, String inRoom, String userTag) {
 		
 		if(home == null) return;
-		
+		System.out.println("Add location " + home+floor+room+inRoom+userTag);
 		SubLocation subL = new SubLocation(floor,room,inRoom,userTag);
 		if(home!=null)
 			locations.put(home.toLowerCase(),subL);		
@@ -64,22 +64,26 @@ public class Location extends Property {
 		// this is the matching scheme given to location
 		if(DEBUG)System.out.println("Checking Floor");
 		String floor = queryProperties.get("FLOOR");
-		if(floor!=null && !floor.equalsIgnoreCase(subL.floor)) 
+		if(DEBUG)System.out.println("query:" + floor+ " ondevice:" +subL.floor);
+		if(floor!=null && !floor.equalsIgnoreCase("notset") && !floor.equalsIgnoreCase(subL.floor)) 
 			return false;
 		
 		if(DEBUG)System.out.println("Checking room");
 		String room = queryProperties.get("ROOM");
-		if(room!=null && !room.equalsIgnoreCase(subL.room)) 
+		if(DEBUG)System.out.println("query:" + room+ " ondevice:" +subL.room);
+		if(room!=null && !room.equalsIgnoreCase("notset")&& !room.equalsIgnoreCase(subL.room)) 
 			return false;
 		
 		if(DEBUG)System.out.println("Checking inRoom");
 		String inRoom = queryProperties.get("INROOM");
-		if(inRoom!=null && !inRoom.equalsIgnoreCase(subL.inRoom)) 
+		if(DEBUG)System.out.println("query:" + inRoom+ " ondevice:" +subL.inRoom);
+		if(inRoom!=null && !inRoom.equalsIgnoreCase("notset") && !inRoom.equalsIgnoreCase(subL.inRoom)) 
 			return false;
 		
 		if(DEBUG)System.out.println("Checking usertag");
 		String userTag = queryProperties.get("USERTAG");
-		if(userTag!=null && !userTag.equalsIgnoreCase(subL.userTag)) 
+		if(DEBUG)System.out.println("query:" + userTag+ " ondevice:" +subL.userTag);
+		if(userTag!=null && !userTag.equalsIgnoreCase("notset") && !userTag.equalsIgnoreCase(subL.userTag)) 
 			return false;
 		
 		return true;
