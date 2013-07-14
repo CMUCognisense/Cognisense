@@ -278,8 +278,8 @@ public class ServiceDiscoveryLayer{
 	}
 
 	public void addProperty(Property property) {
-		if(property.name == null)
-			property.name = property.getClass().getName();
+		if(property.getName() == null)
+			property.setName(property.getClass().getName());
 		service.addProperties(property);
 	}
 
@@ -511,8 +511,10 @@ public class ServiceDiscoveryLayer{
 				builder.append(",");
 			}
 			for( Property property: getProperties().values())
+			{
 				builder.append(property.printProperty());
-
+				builder.append(",");
+			}
 		}
 
 		return builder.toString();
