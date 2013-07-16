@@ -36,6 +36,7 @@ public class LocationAssignment extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_location);
 
+		inRoomList.add("Empty");
 		inRoomList.add("Top");
 		inRoomList.add("Bottom");
 		inRoomList.add("Right");
@@ -69,7 +70,6 @@ public class LocationAssignment extends Activity{
 		detail = (TextView) findViewById(R.id.serviceid);
 		usertags = (EditText) findViewById(R.id.usertag);
 		
-		// TODO
 		done.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -77,9 +77,24 @@ public class LocationAssignment extends Activity{
 				// first get what the user has given
 				String home = homes.getSelectedItem().toString();
 				String floor = floors.getSelectedItem().toString();
+				if (floor.trim().equals("Empty")) {
+				    floor = "notset";
+				}
+
 				String room = rooms.getSelectedItem().toString();
+				if (room.trim().equals("Empty")) {
+				    room = "notset";
+				}
+				
 				String inroom = inrooms.getSelectedItem().toString();
+				if (inroom.trim().equals("Empty")) {
+				    inroom = "notset";
+				}
+
 				String usertag = usertags.getText().toString();
+				if (usertag.trim().equals("")) {
+				    usertag = "notset";
+				}
 				
 				// send setLocation to the selected device
 				Intent setLocation = new Intent(LocationAssignment.this, RegistrationService.class);
@@ -93,6 +108,7 @@ public class LocationAssignment extends Activity{
 				addUserTag.putExtra("command", "ADDUSERTAG");
 				addUserTag.putExtra("USERTAG", usertag);
 				startService(addUserTag);
+				finish();
 			}
 		});
 
@@ -103,6 +119,10 @@ public class LocationAssignment extends Activity{
 				homeList = intent.getStringArrayListExtra("homes");
 				floorList = intent.getStringArrayListExtra("floors");
 				roomList = intent.getStringArrayListExtra("rooms");
+
+				floorList.add(0, "Empty");
+				roomList.add(0, "Empty");
+				
 				populateHome();
 				populateFloors();
 				populateRooms();

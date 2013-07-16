@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 public class FindDevices extends Activity implements OnClickListener{
 
-	private Button assign, refresh, stop;
+	private Button assign, refresh;
 	private TextView details;
 	private Spinner devices;
 	private BroadcastReceiver receiver;
@@ -45,13 +45,11 @@ public class FindDevices extends Activity implements OnClickListener{
 	public void init() {
 		assign = (Button) findViewById(R.id.searchAssign);
 		refresh = (Button) findViewById(R.id.searchRefresh);
-		stop = (Button) findViewById(R.id.searchStop);
 		devices = (Spinner) findViewById(R.id.searchSpinner);
 		details = (TextView) findViewById(R.id.searchdetail);
 		
 		assign.setOnClickListener(this);
 		refresh.setOnClickListener(this);
-		stop.setOnClickListener(this);
 
 		// register receiver for the intent sent from the registration service
 		receiver = new BroadcastReceiver() {
@@ -101,13 +99,18 @@ public class FindDevices extends Activity implements OnClickListener{
 				String serviceid = entry[1];
 				// Set the text field to the detailed information
 				String info = deviceMap.get(serviceid);
-				details.setText(info);
+				String[] infos = info.split(",");
+				StringBuilder text = new StringBuilder();
+				for (int i = 0; i < infos.length; i++) {
+					text.append(infos[i]);
+					text.append("\n");
+				}
+				details.setText(text.toString());
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
+				// do nothing
 			}
 		});
 	}
@@ -119,6 +122,13 @@ public class FindDevices extends Activity implements OnClickListener{
 		case R.id.searchAssign:		
 			Intent assignLoc = new Intent(context,LocationAssignment.class);
 			assignLoc.putExtra("Device", devices.getSelectedItem().toString());
+			if (isStarted) {
+				// first stop the receiving of getInfo trigger
+				Intent stop = new Intent(FindDevices.this, RegistrationService.class);
+				stop.putExtra("command", "STOP");
+				startService(stop);
+				isStarted = false;
+			}
 			startActivity(assignLoc);
 			break;
 		case R.id.searchRefresh:
@@ -131,15 +141,6 @@ public class FindDevices extends Activity implements OnClickListener{
 			findDevice.putExtra("command", "FINDDEVICE");
 			isStarted = true;
 			startService(findDevice);
-			break;
-		case R.id.searchStop:
-			if (isStarted) {
-				// first stop the receiving of getInfo trigger
-				Intent stop = new Intent(FindDevices.this, RegistrationService.class);
-				stop.putExtra("command", "STOP");
-				startService(stop);
-				isStarted = false;
-			}
 			break;
 		}
 	}

@@ -31,12 +31,6 @@
         android:text="Refresh" />
 
     <Button
-        android:id="@+id/searchStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop" />
-
-    <Button
         android:id="@+id/searchAssign"
         android:layout_width="164dp"
         android:layout_height="wrap_content"

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EnterMap extends Activity implements OnClickListener{
 
@@ -43,6 +44,12 @@ public class EnterMap extends Activity implements OnClickListener{
 		final Context context = this;
 		switch(v.getId()){
 		case R.id.home : 
+			//first check if the text field is empty
+			if(isEmpty(homeText)){
+				Toast.makeText(this, "Please enter home name", Toast.LENGTH_SHORT).show();
+				return;
+			}
+				
 			// This will add home to the database			
 			// disable the home button
 			home.setEnabled(false);
@@ -55,6 +62,12 @@ public class EnterMap extends Activity implements OnClickListener{
 			break;
 
 		case R.id.floor: 
+			//first check if the text field is empty
+			if(isEmpty(floorText)){
+				Toast.makeText(this, "Please enter floor name", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
 			// This will add floor to the database
 			Intent addFloor = new Intent(context, RegistrationService.class);
 			addFloor.putExtra("command", "ADDFLOOR");
@@ -65,6 +78,12 @@ public class EnterMap extends Activity implements OnClickListener{
 			break;
 
 		case R.id.room: 
+			//first check if the text field is empty
+			if(isEmpty(roomText)){
+				Toast.makeText(this, "Please enter room name", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
 			// This will add room to the database
 			Intent addRoom = new Intent(context, RegistrationService.class);
 			addRoom.putExtra("command", "ADDROOM");
@@ -79,5 +98,12 @@ public class EnterMap extends Activity implements OnClickListener{
 			startActivity(viewMap);
 			break;				 
 		}
+	}
+
+	private boolean isEmpty(TextView textView) {
+		if (textView.getText().toString().trim().equals(""))
+			return true;
+		else
+			return false;
 	}
 }

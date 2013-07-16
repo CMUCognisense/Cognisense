@@ -131,7 +131,9 @@ public class RegistrationService extends android.app.Service{
 			// if the app wants to add user tag to the database
 			if (command.equals("ADDUSERTAG")) {
 				String usertag = intent.getStringExtra("USERTAG");
-				sdl.addUsertag(usertag);
+				if (!usertag.equals("notset")) {
+					sdl.addUsertag(usertag);					
+				}
 			}
 			
 			// if the app wants to stop receiving getInfo trigger
