@@ -16,6 +16,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+/**
+ * This is the activity where user assign the location to a service 
+ * he/she has chosen for location assignment. The user can assign any 
+ * location in the home map. The location consists of home, floor, room,
+ * inroom and usertag. The home is the only field that cannot be empty. 
+ * 
+ * @author Pengcheng
+ *
+ */
 
 public class LocationAssignment extends Activity{
 	private Button done;
@@ -36,14 +45,6 @@ public class LocationAssignment extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_location);
 
-		inRoomList.add("Empty");
-		inRoomList.add("Top");
-		inRoomList.add("Bottom");
-		inRoomList.add("Right");
-		inRoomList.add("Left");
-		inRoomList.add("Front");
-		inRoomList.add("Back");
-
 		info = getIntent().getStringExtra("Device");
 		serviceid = info.split(" ")[1];
 
@@ -51,6 +52,7 @@ public class LocationAssignment extends Activity{
 		init();
 		
 		detail.setText(info);
+
 		// send get info action to all the devices
 		Intent findDevice = new Intent(LocationAssignment.this, RegistrationService.class);
 		findDevice.putExtra("command", "GETLOCATION");
@@ -64,12 +66,21 @@ public class LocationAssignment extends Activity{
 	private void init() {
 		done = (Button) findViewById(R.id.setlocationbutton);
 		homes = (Spinner) findViewById(R.id.spinner1);
-		rooms = (Spinner) findViewById(R.id.spinner2);
-		floors = (Spinner) findViewById(R.id.spinner3);
+		floors = (Spinner) findViewById(R.id.spinner2);
+		rooms = (Spinner) findViewById(R.id.spinner3);
 		inrooms = (Spinner) findViewById(R.id.spinner4);
 		detail = (TextView) findViewById(R.id.serviceid);
 		usertags = (EditText) findViewById(R.id.usertag);
 		
+		inRoomList.add("Empty");
+		inRoomList.add("Top");
+		inRoomList.add("Bottom");
+		inRoomList.add("Right");
+		inRoomList.add("Left");
+		inRoomList.add("Front");
+		inRoomList.add("Back");
+
+
 		done.setOnClickListener(new OnClickListener() {
 
 			@Override

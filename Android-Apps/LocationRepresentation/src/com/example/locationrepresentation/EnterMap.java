@@ -10,6 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * This activity provide an interface where user can enter the home map 
+ * for the home. At one time user can only enter one home, multiple floors
+ * and multiple rooms.
+ * 
+ * @author Pengcheng
+ *
+ */
 public class EnterMap extends Activity implements OnClickListener{
 
 	private Button home,floor,room,view;
@@ -18,6 +26,7 @@ public class EnterMap extends Activity implements OnClickListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.house_map);
+
 		// Initialize the views
 		init();
 	}
@@ -40,10 +49,11 @@ public class EnterMap extends Activity implements OnClickListener{
 	}
 
 
+	@Override
 	public void onClick(View v) {
 		final Context context = this;
 		switch(v.getId()){
-		case R.id.home : 
+		case R.id.home: 
 			//first check if the text field is empty
 			if(isEmpty(homeText)){
 				Toast.makeText(this, "Please enter home name", Toast.LENGTH_SHORT).show();
@@ -56,8 +66,10 @@ public class EnterMap extends Activity implements OnClickListener{
 			Intent addHome = new Intent(context, RegistrationService.class);
 			addHome.putExtra("command", "ADDHOME");
 			addHome.putExtra("HOME", homeText.getText().toString());
+
 			// clear the text field so that user won't be confused
 			homeText.setText("");
+
 			startService(addHome);
 			break;
 
@@ -72,8 +84,10 @@ public class EnterMap extends Activity implements OnClickListener{
 			Intent addFloor = new Intent(context, RegistrationService.class);
 			addFloor.putExtra("command", "ADDFLOOR");
 			addFloor.putExtra("FLOOR", floorText.getText().toString());
+
 			// clear the text field so that user won't be confused
 			floorText.setText("");
+
 			startService(addFloor);
 			break;
 
@@ -88,18 +102,27 @@ public class EnterMap extends Activity implements OnClickListener{
 			Intent addRoom = new Intent(context, RegistrationService.class);
 			addRoom.putExtra("command", "ADDROOM");
 			addRoom.putExtra("ROOM", roomText.getText().toString());
+
 			// clear the text field so that user won't be confused
 			roomText.setText("");
+
 			startService(addRoom);
 			break;
 
 		case R.id.view: 
+			// if the user wants to view the map he has already entered
 			Intent viewMap = new Intent(EnterMap.this, ViewMap.class);
 			startActivity(viewMap);
 			break;				 
 		}
 	}
 
+	/**
+	 * This method takes TextView as an input and examine the text to 
+	 * check if the field is empty or it contains only white spaces.
+	 * @param textView
+	 * @return
+	 */
 	private boolean isEmpty(TextView textView) {
 		if (textView.getText().toString().trim().equals(""))
 			return true;

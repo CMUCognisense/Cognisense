@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 		// Start the android android communication process here
 		Intent serviceIntent = new Intent(MainActivity.this, CommService.class);
 		startService(serviceIntent);
@@ -54,6 +55,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent enterMap = new Intent(context, EnterMap.class);
 			startActivity(enterMap);
 			break;
+
 		// bring up the assign location activity(registering new device)
 		case R.id.assign: 
 			Intent searchDevice = new Intent(context, FindDevices.class);

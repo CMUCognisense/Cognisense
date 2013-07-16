@@ -19,6 +19,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+/**
+ * This is the activity where user can find all of the devices within the home
+ * environment and see their information.
+ * 
+ * @author Pengcheng
+ *
+ */
 public class FindDevices extends Activity implements OnClickListener{
 
 	private Button assign, refresh;
@@ -32,6 +39,7 @@ public class FindDevices extends Activity implements OnClickListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_new_devices);
+
 		// initialize the views
 		init();
 
@@ -42,6 +50,9 @@ public class FindDevices extends Activity implements OnClickListener{
 		startService(findDevice);
 	}
 
+	/**
+	 * Initialize the views, listeners and receivers
+	 */
 	public void init() {
 		assign = (Button) findViewById(R.id.searchAssign);
 		refresh = (Button) findViewById(R.id.searchRefresh);
@@ -81,9 +92,12 @@ public class FindDevices extends Activity implements OnClickListener{
 					}
 					entry.append(" ");
 					entry.append(id);
+
+					// add this entry to the list
 					list.add(entry.toString());
 				}
-				// populate the spinner
+				
+				// populate the spinner with the list we construct
 				populateSearchSpinner(list);
 			}
 		};
@@ -94,9 +108,10 @@ public class FindDevices extends Activity implements OnClickListener{
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
-				
+				// first get the service id of the service
 				String entry[] = parent.getItemAtPosition(pos).toString().split(" ");
 				String serviceid = entry[1];
+
 				// Set the text field to the detailed information
 				String info = deviceMap.get(serviceid);
 				String[] infos = info.split(",");
@@ -105,6 +120,7 @@ public class FindDevices extends Activity implements OnClickListener{
 					text.append(infos[i]);
 					text.append("\n");
 				}
+				// show detailed information in the text view
 				details.setText(text.toString());
 			}
 
@@ -119,11 +135,21 @@ public class FindDevices extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		final Context context = this;
 		switch(v.getId()){
+		// once the user click on the assign button, the receiving of getInfo
+		// trigger will be stopped and user will assign location to the service
+		// he just chose
 		case R.id.searchAssign:		
 			Intent assignLoc = new Intent(context,LocationAssignment.class);
-			assignLoc.putExtra("Device", devices.getSelectedItem().toString());
+			String serviceID = devices.getSelectedItem().toString();
+			
+			//if no device is found
+			if (serviceID.trim().equals("") || serviceID == null) {
+				return;
+			}
+
+			assignLoc.putExtra("Device", serviceID);
 			if (isStarted) {
-				// first stop the receiving of getInfo trigger
+				// stop the receiving of getInfo trigger
 				Intent stop = new Intent(FindDevices.this, RegistrationService.class);
 				stop.putExtra("command", "STOP");
 				startService(stop);
@@ -131,11 +157,15 @@ public class FindDevices extends Activity implements OnClickListener{
 			}
 			startActivity(assignLoc);
 			break;
+
+		// once the user hit refresh button, the registration service will start
+		// a new round of searching for services in the home
 		case R.id.searchRefresh:
-			// clear all the info
+			// clear all the info in the current UI
 			ArrayList<String> empty = new ArrayList<String>();
 			populateSearchSpinner(empty);
 			details.setText("");
+
 			// send get info action to all the devices
 			Intent findDevice = new Intent(FindDevices.this, RegistrationService.class);
 			findDevice.putExtra("command", "FINDDEVICE");
@@ -156,6 +186,9 @@ public class FindDevices extends Activity implements OnClickListener{
 		devices.setAdapter(dataAdapter);
 	}
 
+	/**
+	 * register and unregister the broadcast receiver
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();

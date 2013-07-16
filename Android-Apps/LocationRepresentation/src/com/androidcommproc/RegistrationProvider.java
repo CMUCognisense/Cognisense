@@ -2,6 +2,8 @@ package com.androidcommproc;
 /**
  * This class exposes the interface to other applications so that other
  * applications are able to operate on the common database on the phone
+ * 
+ * @author Pengcheng
  */
 import com.util.DatabaseHelper;
 
