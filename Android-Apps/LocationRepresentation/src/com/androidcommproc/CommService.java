@@ -27,7 +27,7 @@ public class CommService extends android.app.Service{
 		// get an instance of the service discovery layer and
 		// the receiver thread will start
 		if(this.myServiceDiscovery == null){
-			myServiceDiscovery = new SdlCommon(this, true, false);
+			myServiceDiscovery = new SdlCommon(this, false, false);
 		}
 	}
 	

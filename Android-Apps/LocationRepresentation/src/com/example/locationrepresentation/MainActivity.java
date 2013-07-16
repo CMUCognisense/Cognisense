@@ -22,7 +22,7 @@ import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	Button map,assign,change;
+	Button map,assign;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,11 +40,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void init() {
 		map = (Button) findViewById(R.id.map);
 		assign = (Button) findViewById(R.id.assign);
-		change = (Button) findViewById(R.id.change);
 
 		map.setOnClickListener(this);
 		assign.setOnClickListener(this);
-		change.setOnClickListener(this);
 	}
 
 	@Override
@@ -58,13 +56,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		// bring up the assign location activity(registering new device)
 		case R.id.assign: 
-			Intent searchNewDevice = new Intent(context, AssignLocationToNew.class);
-			startActivity(searchNewDevice);
-			break;
-		// bring up the activity where user can change his/her own location
-		case R.id.change : 
-			Intent changeLocation = new Intent(context, ChangeLocation.class);
-			startActivity(changeLocation);
+			Intent searchDevice = new Intent(context, FindDevices.class);
+			startActivity(searchDevice);
 			break;
 		}
 	}
