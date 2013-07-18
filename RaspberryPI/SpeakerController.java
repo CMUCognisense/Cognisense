@@ -41,26 +41,40 @@ public class SpeakerController {
 		
 		Message message;
 		// set the location of the speaker
-		message = new Message(serviceId);
-		message.addServiceType("Speaker");
-        message.addAction("getInfo");
-        sdl.sendMessage(message);
-        findSpeakers = 1;
-        Thread.sleep(2000);
-        findSpeakers = 0;
-        Console console = System.console();
-		String speakerId = console.readLine("Select a speaker to set location :" + SpeakersFound.toString());
-		String location = console.readLine("Enter location:");
-		message = new Message(serviceId);
-		message.addServiceId(speakerId);
-        message.addAction("setLocation",location);
-        sdl.sendMessage(message);
-
-        speakerId = console.readLine("Select a speaker to set location :" + SpeakersFound.toString());
-		location = console.readLine("Enter location:");
-		message = new Message(serviceId);
-		message.addServiceId(speakerId);
-        message.addAction("setLocation",location);
+//		message = new Message(serviceId);
+//		message.addServiceType("LED");
+//		message.addServiceType("Speaker");
+//        message.addAction("getInfo");
+//        sdl.sendMessage(message);
+//        findSpeakers = 1;
+//        Thread.sleep(2000);
+//        findSpeakers = 0;
+//        
+//        
+//        Console console = System.console();
+//		String speakerId = console.readLine("Select a speaker to set location :" + SpeakersFound.toString());
+//		String location = console.readLine("Enter location:");
+//		message = new Message(serviceId);
+//		message.addServiceId(speakerId);
+//        message.addAction("setLocation",location);
+//        sdl.sendMessage(message);
+//        
+//        speakerId = console.readLine("Select a speaker to set location :" + SpeakersFound.toString());
+//		location = console.readLine("Enter location:");
+//
+//		
+//		message = new Message(serviceId);
+//		message.addServiceId(speakerId);
+//        message.addAction("setLocation",location);
+//        sdl.sendMessage(message);
+        
+        message = new Message(serviceId);
+        message.addServiceType("LED");
+        message.addServiceType("Speaker");
+        message.addProperty("Location");
+        message.addPropertyValue("Location", "HOME", "home");
+        message.addPropertyValue("Location", "USERTAG","window");
+        message.addAction("notify");
         sdl.sendMessage(message);
         
 		//mylocation = console.readLine("Set your location:");

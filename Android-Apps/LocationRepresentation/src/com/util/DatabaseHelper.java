@@ -3,6 +3,8 @@ package com.util;
 /**
  * This is the database open helper. One database helper class operates
  * on one database. More tables can be added here.
+ *	
+ * @author Pengcheng
  */
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

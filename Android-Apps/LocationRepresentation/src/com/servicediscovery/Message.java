@@ -1,6 +1,5 @@
 package com.servicediscovery;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,8 +27,7 @@ import com.google.gson.Gson;
  *
  */
 
-public class Message implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class Message {
 	private List<String> serviceID;
 	private List<String> serviceTypes;
 	private Map<String,Map<String,String>> properties;
@@ -172,6 +170,9 @@ public class Message implements Serializable{
 			return null;
 
 		if(srcServiceID==null)
+			return null;
+		
+		if(serviceID.size() == 0 && serviceTypes.size() == 0 && properties.size() > 0)
 			return null;
 		
 		Gson gson = new Gson();
