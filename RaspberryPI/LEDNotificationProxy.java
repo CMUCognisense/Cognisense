@@ -47,43 +47,22 @@ public class LEDNotificationProxy {
 		sdl.registerApp(mainObj);
 		serviceId = sdl.registerNewService("LED");
 		sdl.addLocationProperty(serviceId);
-		sdl.registerActions(serviceId, "TURNON", "TURNON",
+		sdl.registerActions(serviceId, "notify", "notify",
 				LEDNotificationProxy.class);
 		sdl.registerActions(serviceId, "TURNOFF", "TURNOFF",
 				LEDNotificationProxy.class);
 
+		sdl.registerActions(serviceId, "TURNON", "TURNON",
+				LEDNotificationProxy.class);
 		sdl.registerActions(serviceId, "setLocation", "setLocation",
 				LEDNotificationProxy.class);
 		sdl.registerActions(serviceId, "getInfo", "getInfo",
 				LEDNotificationProxy.class);
 		sdl.addProperty(serviceId, new LEDStatus("OFF"));
-
 		Message message = new Message(serviceId);
 		message.addServiceType("LED");
-		message.addAction("setLocation", "home+one+bedroom+Top+onfloor");
+		message.addAction("notify");
 		sdl.sendMessage(message);
-		System.out.println("After sending first one");
-
-		message = new Message(serviceId);
-		message.addAction("getInfo");
-		message.addServiceType("LED");
-		message.addProperty("Location");
-		message.addPropertyValue("Location", "HOME", "home");
-		message.addPropertyValue("Location", "FLOOR", "one");
-		message.addPropertyValue("Location", "ROOM", "bedroom");
-		message.addPropertyValue("Location", "INROOM", "Top");
-		message.addPropertyValue("Location", "USERTAG", "onfloor");
-		sdl.sendMessage(message);
-		System.out.println("After sending second one");
-
-		message = new Message(serviceId);
-		message.addAction("getInfo");
-		message.addServiceType("LED");
-		message.addProperty("LEDStatus");
-		message.addPropertyValue("LEDStatus", "LEDSTATUS", "OFF");
-		sdl.sendMessage(message);
-
-		System.out.println("HERE I AM!");
 
 	}
 
@@ -92,12 +71,12 @@ public class LEDNotificationProxy {
 		DatagramSocket socket;
 
 		try {
-			socket = new DatagramSocket(5005);
+			socket = new DatagramSocket(5002);
 
 			DatagramPacket receivePacket = new DatagramPacket(receiveData,
 					receiveData.length);
 			System.out
-					.println("Listening on : 5005 for notificationLEDArduino");
+					.println("Listening on : 5002 for notificationLEDArduino");
 
 			socket.receive(receivePacket);
 			String receiveMsg = new String(receivePacket.getData(), 0,
@@ -119,8 +98,10 @@ public class LEDNotificationProxy {
 
 	}
 
-	public void TURNON(Object actionInput, Object srcServiceId) {
+	public void notify(Object actionInput, Object srcServiceId) {
 		try {
+
+			System.out.println("Result is: ");
 			DataOutputStream outToServer = new DataOutputStream(
 					clientSocket.getOutputStream());
 
@@ -132,6 +113,21 @@ public class LEDNotificationProxy {
 			e1.printStackTrace();
 		}
 
+	}
+
+	public void TURNON(Object actionInput, Object srcServiceId) {
+		try {
+
+			DataOutputStream outToServer = new DataOutputStream(
+					clientSocket.getOutputStream());
+
+			outToServer.writeBytes("TURNOO");
+
+			sdl.addProperty(serviceId, new LEDStatus("ON"));
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	public void TURNOFF(Object actionInput, Object srcServiceId) {
