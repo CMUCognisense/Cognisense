@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RegistrationApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="inRoom">Choose a side</string>
+    <string-array name="sides">
+        <item>Select side</item>
+        <item>left</item>
+        <item>right</item>
+        <item>top</item>
+        <item>bottom</item>
+        <item>front</item>
+        <item>back</item>
+    </string-array>
+    <string name = "home">Suggested homes</string>
+    <string name = "floor">Suggested floors</string>
+	<string name = "room">Suggested rooms</string>
+	<string name = "SelectDevice">Select Device</string>
+</resources>
