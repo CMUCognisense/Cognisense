@@ -49,7 +49,6 @@ public class DoorBellProxy_2 {
 				while (clientSocket.getInputStream().read() > 0) {
 					String modifiedSentence = inFromServer.readLine();
 					System.out.println("FROM SERVER: " + modifiedSentence);
-
 					sendMessageIndicateDoorbellOn();
 				}
 			}
@@ -69,7 +68,6 @@ public class DoorBellProxy_2 {
 		System.out
 				.println("*************Send a DoorBell Message****************!");
 		Message message = new Message(serviceId);
-		message.addServiceType("LEDConfigurationService");
 		message.addTrigger("onDoorbell");
 		sdl.sendMessage(message);
 	}
