@@ -1,14 +1,9 @@
 package com.servicediscovery;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 
 
-public class Trigger implements Serializable{
+public class Trigger {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	Method method;
 	String triggerTag;
 	

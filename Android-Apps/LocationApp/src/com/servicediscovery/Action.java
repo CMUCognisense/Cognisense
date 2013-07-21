@@ -1,14 +1,9 @@
 package com.servicediscovery;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 
 
-public class Action implements Serializable{
+public class Action {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private Method method;
 	private String actionTag;
 	

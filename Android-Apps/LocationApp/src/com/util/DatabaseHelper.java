@@ -1,12 +1,14 @@
 package com.util;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * This is the database open helper. One database helper class operates
  * on one database. More tables can be added here.
+ *	
+ * @author Pengcheng
  */
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final String DBNAME = "cognisense.db";
