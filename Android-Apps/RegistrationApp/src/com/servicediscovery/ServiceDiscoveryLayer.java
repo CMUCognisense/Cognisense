@@ -97,7 +97,7 @@ public class ServiceDiscoveryLayer{
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
 
         // if no row is available for the service type
-        if (cursor.getCount() == 0) {
+        if (cursor == null || cursor.getCount() == 0) {
         	cursor.close();
 			return null;
 		}
@@ -253,7 +253,11 @@ public class ServiceDiscoveryLayer{
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.HOME_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-		while(cursor.moveToNext()){
+        
+        if(cursor == null)
+        	return null;
+        
+        while(cursor.moveToNext()){
 			String home = cursor.getString(cursor.getColumnIndex("HOME"));
 			homes.add(home);
 		}
@@ -270,7 +274,11 @@ public class ServiceDiscoveryLayer{
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.FLOOR_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-		while(cursor.moveToNext()){
+        
+        if(cursor == null)
+        	return null;
+
+        while(cursor.moveToNext()){
 			String floor = cursor.getString(cursor.getColumnIndex("FLOOR"));
 			floors.add(floor);
 		}
@@ -287,7 +295,11 @@ public class ServiceDiscoveryLayer{
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.ROOM_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-		while(cursor.moveToNext()){
+        
+        if(cursor == null)
+        	return null;
+
+        while(cursor.moveToNext()){
 			String room = cursor.getString(cursor.getColumnIndex("ROOM"));
 			rooms.add(room);
 		}
@@ -304,7 +316,11 @@ public class ServiceDiscoveryLayer{
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.USERTAG_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-		while(cursor.moveToNext()){
+        
+        if(cursor == null)
+        	return null;
+
+        while(cursor.moveToNext()){
 			String usertag = cursor.getString(cursor.getColumnIndex("USERTAG"));
 			usertags.add(usertag);
 		}
