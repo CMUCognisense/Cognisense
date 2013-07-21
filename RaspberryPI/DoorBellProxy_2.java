@@ -48,7 +48,7 @@ public class DoorBellProxy_2 {
 					sdl.addLocationValue(serviceId, "MyHome", "one", "Bedroom",
 							null, "nearWindow");
 					sdl.registerActions(serviceId, "getInfo", "getInfo",
-							LEDNotificationProxy.class);
+							DoorBellProxy_2.class);
 					sendMessageIndicateDoorbellOn();
 				}
 			}
