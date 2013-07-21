@@ -47,6 +47,8 @@ public class DoorBellProxy_2 {
 					sdl.addLocationProperty(serviceId);
 					sdl.addLocationValue(serviceId, "MyHome", "one", "Bedroom",
 							null, "nearWindow");
+					sdl.registerActions(serviceId, "getInfo", "getInfo",
+							LEDNotificationProxy.class);
 					sendMessageIndicateDoorbellOn();
 				}
 			}
@@ -99,6 +101,18 @@ public class DoorBellProxy_2 {
 		}
 
 		return null;
+
+	}
+	public void getInfo(Object actionInput, Object srcServiceId) {
+		System.out
+				.println("GetInfo is called " + (String) actionInput
+						+ (String) srcServiceId + " Info is\n"
+						+ sdl.getInfo(serviceId));
+
+		Message message = new Message(serviceId);
+		message.addTrigger("getInfo", sdl.getInfo(serviceId));
+		message.addServiceId((String) srcServiceId);
+		sdl.sendMessage(message);
 
 	}
 
