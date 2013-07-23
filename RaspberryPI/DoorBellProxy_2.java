@@ -37,16 +37,18 @@ public class DoorBellProxy_2 {
 			System.out.println("Connected to arduino\n");
 			BufferedReader inFromServer = new BufferedReader(
 					new InputStreamReader(clientSocket.getInputStream()));
+			sdl.registerApp(mainObj);
+			serviceId = sdl.registerNewService("DoorbellProxy");
+			sdl.addLocationProperty(serviceId);
+			sdl.registerActions(serviceId, "getInfo", "getInfo",
+					DoorBellProxy_2.class);
+			sdl.registerActions(serviceId, "setLocation", "setLocation",
+					LEDNotificationProxy.class);
 
 			while (true) {
 				while (clientSocket.getInputStream().read() > 0) {
 					String modifiedSentence = inFromServer.readLine();
 					System.out.println("FROM SERVER: " + modifiedSentence);
-					sdl.registerApp(mainObj);
-					serviceId = sdl.registerNewService("DoorbellProxy");
-					sdl.addLocationProperty(serviceId);
-					sdl.addLocationValue(serviceId, "MyHome", "one", "Bedroom",
-							null, "nearWindow");
 					sendMessageIndicateDoorbellOn();
 				}
 			}
@@ -66,7 +68,6 @@ public class DoorBellProxy_2 {
 		System.out
 				.println("*************Send a DoorBell Message****************!");
 		Message message = new Message(serviceId);
-		message.addServiceType("LEDConfigurationService");
 		message.addTrigger("onDoorbell");
 		sdl.sendMessage(message);
 	}
@@ -99,6 +100,19 @@ public class DoorBellProxy_2 {
 		}
 
 		return null;
+
+	}
+
+	public void getInfo(Object actionInput, Object srcServiceId) {
+		System.out
+				.println("GetInfo is called " + (String) actionInput
+						+ (String) srcServiceId + " Info is\n"
+						+ sdl.getInfo(serviceId));
+
+		Message message = new Message(serviceId);
+		message.addTrigger("getInfo", sdl.getInfo(serviceId));
+		message.addServiceId((String) srcServiceId);
+		sdl.sendMessage(message);
 
 	}
 

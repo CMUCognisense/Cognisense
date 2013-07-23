@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.doorbell"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.commproc.provider.READ_DATABASE" />
+    <uses-permission android:name="com.commproc.provider.WRITE_DATABASE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <receiver
+            android:name="com.example.doorbell.MsgReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="DoorbellConfiguration" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.example.doorbell.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.doorbell.Device"
+            android:label="@string/app_name" >
+        </activity>
+
+        <service
+            android:name="com.example.doorbell.DoorBellConfigurationService"
+            android:label="@string/app_name" >
+        </service>
+
+        <activity
+            android:name="com.example.doorbell.Location"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.example.doorbell.Time"
+            android:label="@string/app_name" >
+        </activity>
+    </application>
+
+</manifest>

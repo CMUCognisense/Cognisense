@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TimePicker
+        android:id="@+id/timePicker1"
+        android:layout_width="151dp"
+        android:layout_height="116dp" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TimePicker
+        android:id="@+id/timePicker2"
+        android:layout_width="164dp"
+        android:layout_height="116dp" />
+
+    <TextView
+        android:id="@+id/PreviousTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/dontSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dont Set" />
+
+    <Button
+        android:id="@+id/timeDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="Done" />
+
+</LinearLayout>

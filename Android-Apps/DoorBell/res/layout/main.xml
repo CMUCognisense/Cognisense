@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mainDone"
+        android:layout_alignParentLeft="true" >
+
+        <RadioButton
+            android:id="@+id/notify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:text="Notify" />
+
+        <RadioButton
+            android:id="@+id/dontNotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dont Notify" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="36dp"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/location"
+        android:layout_marginTop="16dp"
+        android:text="Enter the User Name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/userSubmit"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userName"
+        android:layout_marginTop="14dp"
+        android:text="Submit" />
+
+    <Button
+        android:id="@+id/mainDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/userSubmit"
+        android:text="Done" />
+
+    <Button
+        android:id="@+id/time"
+        android:layout_width="114dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView2"
+        android:text="Time" />
+
+    <Button
+        android:id="@+id/device"
+        android:layout_width="149dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/mainDone"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="18dp"
+        android:text="Device Type" />
+
+    <Button
+        android:id="@+id/location"
+        android:layout_width="111dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/radio"
+        android:layout_alignRight="@+id/mainDone"
+        android:text="Location" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/userSubmit"
+        android:layout_marginTop="26dp"
+        android:text="Configure time, location and device for notification"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

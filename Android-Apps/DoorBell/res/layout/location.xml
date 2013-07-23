@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/HomeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="36dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Floor"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/FloorSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="38dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/RoomSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="inRoom"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/InRoomSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="38dp" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Favorite place"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/Favorite"
+        android:layout_width="match_parent"
+        android:layout_height="36dp" />
+
+    <TextView
+        android:id="@+id/previousLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/locationDontSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dont Set" />
+
+    <Button
+        android:id="@+id/locationDone"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Done" />
+
+</LinearLayout>

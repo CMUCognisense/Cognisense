@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DoorBell</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+     <string name="Notify">notify</string>
+    <string name="Dont_Notify">dontNotify</string>
+
+</resources>
