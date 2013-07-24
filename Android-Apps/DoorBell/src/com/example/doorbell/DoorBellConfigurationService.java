@@ -72,10 +72,6 @@ public class DoorBellConfigurationService extends android.app.Service{
 
 				String userName = intent.getStringExtra("user").toLowerCase();
 				p.edit().putString("user",userName).commit();
-				Log.v(TAG,"Asking for user location"+userName);
-				Message message = new Message(serviceId);
-				message.addAction("sendLocation",userName);
-				sdl.sendMessage(message);
 			}
 
 			if (configuration.equals("DEVICE")) {
@@ -193,22 +189,34 @@ public class DoorBellConfigurationService extends android.app.Service{
 		serviceId = sdl.registerNewService("DoorbellConfiguration");
 		Log.e(TAG, serviceId);
 		//TODO location setting is not done yet
-		sdl.addLocation();
+		//sdl.addLocation();
 		sdl.registerTriggers("doorbellTriggerMethod","onDoorbell", this.getClass());
-		sdl.registerTriggers("getInfoReceived", "getInfo", this.getClass());
+		//sdl.registerTriggers("getInfoReceived", "getInfo", this.getClass());
 		sdl.registerTriggers("locationReceived", "getLocation", this.getClass());	
 	}
 
+	
 	public void doorbellTriggerMethod(Object actionInput, Object srcServiceId) {
 
+		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
+		Log.v(TAG,"Asking for user location"+p.getString("user",""));
+		Message message = new Message(serviceId);
+		message.addAction("sendLocation",p.getString("user",""));
+		sdl.sendMessage(message);
+	}
+
+
+	public void configurationMatch(){
+		
+		Log.v(TAG, "Entered Configuration Match");
 		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean notify = p.getBoolean("notify", false);
 		boolean isTimeSet = p.getBoolean("timeset", false);
 		boolean isLocationSet = p.getBoolean("locationset",false);
-		Log.v(TAG, "Recieved the Door bell trigger");
 
 		boolean timeResult = false;
-		boolean result = false;
+		boolean result = false;		
+
 		if(isTimeSet==true){
 			timeResult = timeMatch();
 			Log.v(TAG, "Time Match Result: "+timeResult);
@@ -223,21 +231,28 @@ public class DoorBellConfigurationService extends android.app.Service{
 				Log.v(TAG, "D");
 				if(timeResult ==false && result == false){
 					Log.v(TAG, "E");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}
+				if(timeResult==false && result==true){
+					sendNotifyMessage();
+				}
+				if(timeResult==true && result==false){
+					sendNotifyMessage();
+				}
+
 			}
 			if(isTimeSet==false && isLocationSet==true){
 				Log.v(TAG, "F");
 				if(result==false){
 					Log.v(TAG, "G");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}
 			}
 			if(isTimeSet==true && isLocationSet==false){
 				Log.v(TAG, "H");
 				if(timeResult==false){
 					Log.v(TAG, "I");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}
 			}
 
@@ -247,7 +262,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 				Log.v(TAG, "J");
 				if(timeResult == true && result == true){
 					Log.v(TAG, "K");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}	
 			}
 
@@ -255,21 +270,24 @@ public class DoorBellConfigurationService extends android.app.Service{
 				Log.v(TAG, "L");
 				if(timeResult==true){
 					Log.v(TAG, "M");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}
 			}
 			if(isTimeSet == false && isLocationSet == true){
 				Log.v(TAG, "N");
 				if(result==true){
 					Log.v(TAG, "O");
-					getNotificationServiceLocations();
+					sendNotifyMessage();
 				}
 			}
 			if(isTimeSet== false && isLocationSet== false){
 				Log.v(TAG, "P");
-				getNotificationServiceLocations();	
+				sendNotifyMessage();	
 			}
 		}
+
+
+
 	}
 
 	private boolean timeMatch(){
@@ -340,7 +358,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 		if(home.equalsIgnoreCase(p.getString("uhome",""))){
 			Log.v(TAG, "Matched Home"+ p.getString("uhome",""));
 			if(!(floor.equals("notset"))){
-				if(p.getString("uhome","").equals("notset"))
+				if(p.getString("ufloor","").equals("notset"))
 					return false;
 				if((!p.getString("ufloor","").equals("notset")) && (!floor.equalsIgnoreCase(p.getString("ufloor","")))){
 					return false;
@@ -382,50 +400,13 @@ public class DoorBellConfigurationService extends android.app.Service{
 
 	}
 
-	public void triggerNotification(){
 
-		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);		
-		if(p.getString("service","").equals("LED")){
-			Log.v(TAG," Sending trigger message to the LED Service to" +
-					" start the notification");
-			Message message = new Message(serviceId);
-			message.addAction("notify");
-			message.addServiceType("LED");
-			sdl.sendMessage(message);	 
-		}
-		else if(p.getString("service","").equals("Speaker")){
-			Log.v(TAG," Sending trigger message to the speaker Service to" +
-					" start the notification");
-			Message message1 = new Message(serviceId);
-			message1.addAction("notify");
-			message1.addServiceType("Speaker");
-			sdl.sendMessage(message1);
-		}
-		else{
-			Log.v(TAG," Sending trigger message to the LED and speaker Service to" +
-					" start the notification");
-			Message message = new Message(serviceId);
-			message.addAction("notify");
-			message.addServiceType("LED");
-			sdl.sendMessage(message);
-			Message message1 = new Message(serviceId);
-			message1.addAction("notify");
-			message1.addServiceType("Speaker");
-			sdl.sendMessage(message1);			
-		}
-	}
-
-	public void getInfoReceived(Object actionInput, Object srcServiceId) {
-		Log.v(TAG,"Calling Trigger Notification");
-		triggerNotification();
-	}
-
-	private void getNotificationServiceLocations() {
+	private void sendNotifyMessage() {
 		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);	
 		Log.d(TAG," Sending message to get locations of notifications services " );
 		if(p.getString("service","").equals("LED")){			
 			Message message1 = new Message(serviceId);
-			message1.addAction("getInfo");
+			message1.addAction("notify");
 			message1.addServiceType("LED");
 			message1.addProperty("Location");
 			message1.addPropertyValue("Location", "HOME",p.getString("uhome",""));
@@ -440,7 +421,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 
 		else if(p.getString("service","").equals("Speaker")){
 			Message message = new Message(serviceId);
-			message.addAction("getInfo");
+			message.addAction("notify");
 			message.addServiceType("Speaker");
 			message.addProperty("Location");
 			message.addPropertyValue("Location", "HOME", p.getString("uhome",""));
@@ -456,7 +437,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 			Log.d(TAG," Sending message to get locations of Speaker and LED services with location"+ " "+p.getString("uhome","")+
 					p.getString("ufloor","")+p.getString("uroom","")+p.getString("uinRoom","")+p.getString("ufavorite",""));
 			Message message = new Message(serviceId);
-			message.addAction("getInfo");
+			message.addAction("notify");
 			message.addServiceType("Speaker");
 			message.addProperty("Location");
 			message.addPropertyValue("Location", "HOME", p.getString("uhome",""));
@@ -466,7 +447,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 			message.addPropertyValue("Location", "USERTAG", p.getString("ufavorite",""));
 			sdl.sendMessage(message);
 			Message message1 = new Message(serviceId);
-			message1.addAction("getInfo");
+			message1.addAction("notify");
 			message1.addServiceType("LED");
 			message1.addProperty("Location");
 			message1.addPropertyValue("Location", "HOME", p.getString("uhome",""));
@@ -489,6 +470,7 @@ public class DoorBellConfigurationService extends android.app.Service{
 		p.edit().putString("uroom", location[2]).commit();
 		p.edit().putString("uinRoom", location[3]).commit();
 		p.edit().putString("ufavorite", location[4]).commit();
+		configurationMatch();
 	}
 
 }
