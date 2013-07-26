@@ -24,15 +24,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-/**
- * This is the Service discovery layer on the application side. 
- * The apps/services will have an instance of service discovery layer
- * and this class interact with the service discovery layer in the 
- * android communication process and expose APIs to the application layer
- *
- * @author Parth, Pengcheng
- *
- */
+
 public class ServiceDiscoveryLayer{
 	// the service id and the service objects
 	Service service;
@@ -44,14 +36,15 @@ public class ServiceDiscoveryLayer{
 
 	public ServiceDiscoveryLayer(boolean bool) {
 		DEBUG = bool;
+		DEBUG = true;
 		System.out.println("Started the Multicast layer");
 		service = new Service();
 	}
 
 	/**
-	 * this method will add a service to the service set of the Service discovery
-	 * layer. It will perform all the checks for a valid service that need to be
-	 * done. Meanwhile, this will send the intent filter to the android communication
+	 * this method will add a service to the service set of the SDL
+	 * It will perform all the checks for a valid service that need to be done. 
+	 * Meanwhile, this will send the intent filter to the android communication
 	 * process to register 
 	 * @param serviceType
 	 */
@@ -64,16 +57,13 @@ public class ServiceDiscoveryLayer{
 		if((returnVal = queryServiceType(serviceType)) != null){
 			serviceId = returnVal;
 		}
-
 		// if the service type does not exist in the database, generate a new
 		// service id and register this service to the database 
 		else{
 			serviceId  = getNewServiceId();
 			ContentResolver resolver = this.appContext.getContentResolver();
 	        Uri insertUri = Uri.parse("content://com.commproc.provider/INFO");
-
-	        // entrys that is to be inserted to the database
-	        ContentValues values = new ContentValues();
+			ContentValues values = new ContentValues();
 			values.put("SERVICETYPE", serviceType);
 			values.put("INTENTFILTER", intentfilter);
 			values.put("SERVICEID", serviceId);
@@ -89,19 +79,17 @@ public class ServiceDiscoveryLayer{
 	/**
 	 * Query the database to see if the service is already registered
 	 * @param serviceType
-	 * @return serviceID
+	 * @return
 	 */
 	private String queryServiceType(String serviceType) {
         ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/INFO/" + serviceType);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-
         // if no row is available for the service type
-        if (cursor == null || cursor.getCount() == 0) {
+        if (cursor.getCount() == 0) {
         	cursor.close();
 			return null;
 		}
-
         // if the service type already exists in the database
         else{
         	cursor.moveToNext();
@@ -113,8 +101,8 @@ public class ServiceDiscoveryLayer{
 	}
 
 	/**
-	 * Gives a new service id. This is unique across one device
-	 * @return serviceID
+	 * Gives a new service id everytime
+	 * @return
 	 */	
 	public String getNewServiceId() {
 		UUID a = UUID.randomUUID();
@@ -152,17 +140,6 @@ public class ServiceDiscoveryLayer{
 		this.intentfilter = intentfilter;
 	}
 
-	/**
-	 * Register the action to the service so that if the message
-	 * the service to perform an action, the service discovery layer
-	 * will do a callback on the registered function
-	 * 
-	 * @param methodName
-	 * @param actionName
-	 * @param appClass
-	 * @throws Exception
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void registerActions(String methodName, String actionName, 
 			Class appClass) throws Exception {
 		Method appMethod = appClass.getMethod(methodName, Object.class,
@@ -172,17 +149,6 @@ public class ServiceDiscoveryLayer{
 		service.addAction(action);
 	}
 
-	/**
-	 * Register the trigger to the service so that if the message
-	 * the service to perform an action, the service discovery layer
-	 * will do a callback on the registered function
-	 * 
-	 * @param methodName
-	 * @param triggerName
-	 * @param appClass
-	 * @throws Exception
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void registerTriggers(String methodName, String triggerName,
 			Class appClass) throws Exception {
 		Method appMethod = appClass.getMethod(methodName, Object.class,
@@ -246,18 +212,14 @@ public class ServiceDiscoveryLayer{
 
 	/**
 	 * Get the list of home strings from the database
-	 * @return An ArrayList of homes in the database 
+	 * @return
 	 */
 	public ArrayList<String> getHomes(){
 		ArrayList<String> homes = new ArrayList<String>(); 
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.HOME_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        
-        if(cursor == null)
-        	return null;
-        
-        while(cursor.moveToNext()){
+		while(cursor.moveToNext()){
 			String home = cursor.getString(cursor.getColumnIndex("HOME"));
 			homes.add(home);
 		}
@@ -267,18 +229,14 @@ public class ServiceDiscoveryLayer{
 	
 	/**
 	 * Get the list of floor strings from the database
-	 * @return An ArrayList of floors in the database 
+	 * @return
 	 */
 	public ArrayList<String> getFloors(){
 		ArrayList<String> floors = new ArrayList<String>(); 
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.FLOOR_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        
-        if(cursor == null)
-        	return null;
-
-        while(cursor.moveToNext()){
+		while(cursor.moveToNext()){
 			String floor = cursor.getString(cursor.getColumnIndex("FLOOR"));
 			floors.add(floor);
 		}
@@ -288,18 +246,14 @@ public class ServiceDiscoveryLayer{
 	
 	/**
 	 * Get the list of room strings from the database
-	 * @return An ArrayList of rooms in the database 
+	 * @return
 	 */
 	public ArrayList<String> getRooms(){
 		ArrayList<String> rooms = new ArrayList<String>(); 
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.ROOM_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        
-        if(cursor == null)
-        	return null;
-
-        while(cursor.moveToNext()){
+		while(cursor.moveToNext()){
 			String room = cursor.getString(cursor.getColumnIndex("ROOM"));
 			rooms.add(room);
 		}
@@ -309,18 +263,14 @@ public class ServiceDiscoveryLayer{
 
 	/**
 	 * Get the list of usertag strings from the database
-	 * @return An ArrayList of usertags in the database 
+	 * @return
 	 */
 	public ArrayList<String> getUsertags(){
 		ArrayList<String> usertags = new ArrayList<String>(); 
 		ContentResolver contentResolver = appContext.getContentResolver();
         Uri uri = Uri.parse("content://com.commproc.provider/" + DatabaseHelper.USERTAG_TABLE);
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        
-        if(cursor == null)
-        	return null;
-
-        while(cursor.moveToNext()){
+		while(cursor.moveToNext()){
 			String usertag = cursor.getString(cursor.getColumnIndex("USERTAG"));
 			usertags.add(usertag);
 		}
@@ -328,35 +278,22 @@ public class ServiceDiscoveryLayer{
 		return usertags;
 	}
 
-	/**
-	 * Add a property to a service 
-	 * @param property
-	 */
 	public void addProperty(Property property) {
-		if(property.getName() == null)
-			property.setName(property.getClass().getName());
+		if(property.name == null)
+			property.name = property.getClass().getName();
 		service.addProperties(property);
 	}
 
-	//TODO what is this??
 	public void addLocation() {
 		Location location = new Location();
 		location.addLocation("MyHome", "one", "Bedroom", "Top", "onDoor");
 		service.addProperties(location);
 	}
 
-	/**
-	 * Get a map of properties of the service
-	 * @return A map of properties of the service
-	 */
 	public Map<String,Property> getProperties() {
 		return service.getProperties();
 	}
 
-	/**
-	 * Get a List of actions of the service
-	 * @return A list of actions of the service
-	 */
 	public List<String> getActions() {
 		List<String> list = new LinkedList<String>();
 
@@ -368,10 +305,6 @@ public class ServiceDiscoveryLayer{
 		return list;
 	}
 
-	/**
-	 * Get a list of triggers the service can generate
-	 * @return A list of triggers the service can generate
-	 */
 	public List<String> getTriggerGenerated() {
 		return service.getTriggerGenerated(); 
 	}
@@ -380,7 +313,7 @@ public class ServiceDiscoveryLayer{
 	/**
 	 * Get action object by the action name
 	 * @param actionName
-	 * @return An Action object with the action name
+	 * @return
 	 */
 	public Action getAction(String actionName){
 		for(Action action : service.getActions().values()){
@@ -391,10 +324,6 @@ public class ServiceDiscoveryLayer{
 		return null;
 	}
 
-	/**
-	 * Get a list of triggers the service has
-	 * @return A list of triggers the service has
-	 */
 	public List<String> getTriggers() {
 		List<String> list = new LinkedList<String>();
 
@@ -409,7 +338,7 @@ public class ServiceDiscoveryLayer{
 	/**
 	 * Get the trigger object with the trigger name
 	 * @param triggerName
-	 * @return A trigger object with the trigger name
+	 * @return
 	 */
 	public Trigger getTrigger(String triggerName){
 		for(Trigger trigger : service.getTriggers().values()){
@@ -551,7 +480,7 @@ public class ServiceDiscoveryLayer{
 	/**
 	 * This method generate a trigger which can provide the information of this 
 	 * service.
-	 * @return A comma-separated string which has all the information about the service
+	 * @return
 	 */
 	public String getInfo() {
 		StringBuilder builder = new StringBuilder();
@@ -583,10 +512,8 @@ public class ServiceDiscoveryLayer{
 				builder.append(",");
 			}
 			for( Property property: getProperties().values())
-			{
 				builder.append(property.printProperty());
-				builder.append(",");
-			}
+
 		}
 
 		return builder.toString();

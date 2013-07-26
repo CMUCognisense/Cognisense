@@ -1,4 +1,5 @@
 package com.servicediscovery;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,14 +17,13 @@ import java.util.Map.Entry;
  * @author parth
  *
  */
-public class Location extends Property {
-
-	// a map of home name and location inside the home name. 
+public class Location extends Property implements Serializable{
+	private static final long serialVersionUID = 1L;
 	Map<String,SubLocation> locations;
-	public boolean DEBUG = false;
+	public boolean DEBUG = true;
 	public Location(){
 		locations = new HashMap<String, Location.SubLocation>();
-		setName("Location");
+		name = "Location";
 	}
 	
 	public void addLocation(String home, String floor, String room, String inRoom, String userTag) {
@@ -32,18 +32,19 @@ public class Location extends Property {
 		
 		SubLocation subL = new SubLocation(floor,room,inRoom,userTag);
 		if(home!=null)
-			locations.put(home.toLowerCase(),subL);		
+			locations.put(home.toLowerCase(),subL);
+		
+		if(DEBUG) System.out.println("After adding " + locations.toString());
+		
 	}
 	
 	@Override
 	public boolean match(Map<String,String> queryProperties) {
-				
+		
 		// if the property name of the object is the same as your property name
-		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals(getName()))
-		{
-			if(DEBUG)System.out.println("Property Name is "+getName()+" while in message name is "+queryProperties.get("PROPERTYNAME"));
+		if(queryProperties.get("PROPERTYNAME")==null || !queryProperties.get("PROPERTYNAME").equals(name))
 			return false;
-		}
+		
 		// if the service has this home in the location object then get
 		// its sublocation else return false.
 		String homeName = queryProperties.get("HOME").toLowerCase();
@@ -117,7 +118,6 @@ public class Location extends Property {
 		
 		Location speakerLocation = new Location();
 		speakerLocation.addLocation("MyHome", "one", "bedroom", "top", "Nearwindow");
-		System.out.println(speakerLocation.printProperty());
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("HOME","MyHome");
 		checkMatch(speakerLocation, map);
@@ -152,26 +152,26 @@ public class Location extends Property {
 	public String printProperty() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("PROPERTYNAME-");
-		buffer.append("Location");
-		buffer.append("@");
+		buffer.append(name);
+		buffer.append(",");
 		for(Entry<String,SubLocation> entry : locations.entrySet()) 
 		{
 			buffer.append("HOME-");
 			buffer.append(entry.getKey());
-			buffer.append("@");
+			buffer.append(",");
 
 			buffer.append("FLOOR-");
 			buffer.append(entry.getValue().floor);
-			buffer.append("@");
+			buffer.append(",");
 			buffer.append("ROOM-");
 			buffer.append(entry.getValue().room);
-			buffer.append("@");
+			buffer.append(",");
 			buffer.append("INROOM-");
 			buffer.append(entry.getValue().inRoom);
-			buffer.append("@");
+			buffer.append(",");
 			buffer.append("USERTAG-");
 			buffer.append(entry.getValue().userTag);
-			buffer.append("*");
+			buffer.append(",");
 		}
 		return buffer.toString();
 	}
