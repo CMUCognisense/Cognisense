@@ -99,8 +99,8 @@ public class MulticastLayer {
 			{
 				if (!sendPacket("REQ#"+threadSeqNum+"#"+Message))
 					if(DEBUG)System.out.println("Couldnot send packet");
-				try {
-					Thread.sleep(TIMEOUT);
+				try { 
+					Thread.sleep(TIMEOUT + (int)(Math.random()*(TIMEOUT*2)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
