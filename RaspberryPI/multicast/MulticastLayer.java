@@ -100,7 +100,7 @@ public class MulticastLayer {
 				if (!sendPacket("REQ#"+threadSeqNum+"#"+Message))
 					if(DEBUG)System.out.println("Couldnot send packet");
 				try { 
-					Thread.sleep(TIMEOUT + (int)(Math.random()*(TIMEOUT*2)));
+					Thread.sleep(TIMEOUT + (int)(Math.random()*TIMEOUT));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -130,8 +130,8 @@ public class MulticastLayer {
 			}
 			
 			MAX_RETRIES = db.query().size();
-			if(MAX_RETRIES < 6)
-				MAX_RETRIES = 6;
+			if(MAX_RETRIES < 9)
+				MAX_RETRIES = 9;
 			
 			if(DEBUG)System.out.println("The ACKS are: "+ret.toString());
 			if(DEBUG)System.out.println("The MAX_RETRIES is set to:"+MAX_RETRIES);
