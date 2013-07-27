@@ -20,6 +20,8 @@ import javax.crypto.Mac;
 
 
 /**
+ * This class implements the sending and receiving logic for the multicast layer. 
+ * It is the core of the reliable multicast layer. 
  * @author parth
  *
  */
@@ -29,10 +31,14 @@ public class MulticastLayer {
 	private String currentHostIpAddress = null;
 	private int TIMEOUT = 200;
 	private int MAX_RETRIES;
-	HashMap<Integer, HashSet<String>> replyBuckets;
+	private HashMap<Integer, HashSet<String>> replyBuckets;
 	public boolean DEBUG;
 	private SQLiteJDBC db;
 	
+	/**
+	 * returns the mac address of the interface on which it is listening. 
+	 * @return mac address in a string
+	 */
 	public String getDeviceID() {
 		return deviceID;
 	}
@@ -40,6 +46,10 @@ public class MulticastLayer {
 	Random rndNumbers;
 	private HashMap<String, Integer> requestMap;
 	//TODO the size of the hash map needs to be limited
+	/**
+	 * this is the constructor
+	 * @param bool A true value here turns on the debug messages for the class
+	 */
 	public MulticastLayer(boolean bool) {
 		rndNumbers = new Random(System.currentTimeMillis());
 		replyBuckets = new HashMap<Integer, HashSet<String>>();
@@ -63,17 +73,20 @@ public class MulticastLayer {
 	/**
 	 * public method to send a "Message" to all the devices that are to be 
 	 * addressed by the same receive message by them implementing an onReceive 
-	 * method. This is a blocking call and will take a considerable amount of time to complete. 
-	 * Time could vary according to the timeout and the retries used. 
-	 * @param MAX_RETRIES
-	 * @param TIMEOUT
-	 * @param Message
-	 * @return
+	 * method. This is a non blocking call and spawns a new thread to send a message
+	 * each time it is called. 
+	 * @param Message this is the message string to be sent to all other instances of the object on other devices
 	 */
 	public void sendAll(String Message) {
 		new Thread(new Sender(Message)).start();
 	}
 	
+	/**
+	 * This class implements the logic of sending a message multiple times and then waiting 
+	 * for replies from all the devices and recording how many unique replies it got. 
+	 * @author parth
+	 *
+	 */
 	private class Sender implements Runnable {
 
 		String Message;
@@ -199,15 +212,32 @@ public class MulticastLayer {
 	}
 
 	private List<MulticastReceive> _listeners = new ArrayList<MulticastReceive>();
+	
+	/**
+	 * This method is called when a class implements the onReceive interface and 
+	 * and wants a call back on the onReceive function. The call on the onReceive function 
+	 * is implemented as an event listner and this method adds the class to the list 
+	 * of listners. 
+	 * @param listener This has to be an instance of a class that implements the 
+	 * MulticastReceive interface. 
+	 */
 	public synchronized void addEventListener(MulticastReceive listener)  {
 		_listeners.add(listener);
 	}
+	
+	/**
+	 * This method is alost never called. When a class implements the onReceive interface and wants to 
+	 * remove the event listner this method is useful. 
+	 * @param listener
+	 */
 	public synchronized void removeEventListener(MulticastReceive listener)   {
 		_listeners.remove(listener);
 	}
 
-	// call this method whenever you want to notify
-	//the event listeners of the particular event
+	/**
+	 *  call this method whenever you want to notify
+	 *  the event listeners of the particular event
+	 */
 	private class FireEvent implements Runnable {
 
 		String message;
@@ -231,7 +261,11 @@ public class MulticastLayer {
 		
 	}
 
-
+/**
+ * this method give the ip address of the given interface on which the multicast layer object is listening on 
+ * 
+ * @return the IP address in a string format
+ */
 	public String getCurrentEnvironmentNetworkIp() {
 		if (currentHostIpAddress == null) {
 			Enumeration<NetworkInterface> netInterfaces = null;

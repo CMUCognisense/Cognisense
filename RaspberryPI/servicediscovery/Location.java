@@ -7,7 +7,7 @@ import java.util.Set;
 
 
 /**
- * This is a location class. It is a property. 
+ * This is a location class. It is a property. So it extends the property class
  * The match function expects an input in the form of the key value pairs listed below: 
  * PROPERTYNAME Location
  * HOME  		<name of the home>
@@ -28,6 +28,15 @@ public class Location extends Property {
 		setName("Location");
 	}
 	
+	/**
+	 * Adds the location to the location object. This is a setter method of the location object.
+	 * For no value a null should be passed and the home cannot be null 
+	 * @param home the name of the home
+	 * @param floor the name of the floor
+	 * @param room the name of the room 
+	 * @param inRoom the name of the inRoom location which is one of "Top"	"Bottom" "Right" "Left" "Front" "Back" ;
+	 * @param userTag the user tag that can be put in. 
+	 */
 	public void addLocation(String home, String floor, String room, String inRoom, String userTag) {
 		
 		if(home == null) return;
@@ -37,6 +46,17 @@ public class Location extends Property {
 			locations.put(home.toLowerCase(),subL);		
 	}
 	
+	/**
+	 * This is the match function that every property has to override. The match function expects an
+	 * input of the form of a map of string agsint string. The exact input that the location expects is as
+	 * below. 
+	 * "PROPERTYNAME" 	"Location"
+	 * "HOME"  			"<name of the home>"
+	 * "FLOOR"  		"<name of the floor>"
+	 * "ROOM"  			"<name of the room>"
+	 * "INROOM" 		"<On of the values of the enum from  Top, Bottom, Left, Right, Front, Back>"
+	 * "USERTAG"		"<any tag from the user>"
+	 */
 	@Override
 	public boolean match(Map<String,String> queryProperties) {
 				
@@ -118,6 +138,10 @@ public class Location extends Property {
 		}
 	}
 	
+	/**
+	 * this is just to test out some functionality of the class. 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println("Unit tests for location object");
 		
@@ -154,6 +178,12 @@ public class Location extends Property {
 			System.out.println("The location is NOT a match for "+ map.toString());
 	}
 
+	/**
+	 * this is the overidden method from the property class. This method generates a string that
+	 * contains all the information of the current location object. All location values are seperated
+	 * by '@' characters. An example of a string returned is 
+	 * "PROPERTYNAME-Location@HOME-parthshome@FLOOR-secondfloor@ROOM-notset@INROOM-notset@USERTAG-notset"
+	 */
 	@Override
 	public String printProperty() {
 		StringBuilder buffer = new StringBuilder();
