@@ -49,7 +49,7 @@ public class Device extends Activity implements OnClickListener {
 	
 	private void populateSearchSpinner() {
 		devices = (Spinner) findViewById(R.id.spinnerDevice);
-		list.add("speaker");
+		list.add("Speaker");
 		list.add("LED");
 		list.add("both");
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
