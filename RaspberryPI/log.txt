@@ -1,0 +1,12 @@
+Opened database successfully
+Started the Multicast layer
+Message Received: {"serviceID":[],"serviceTypes":[],"properties":{},"triggerName":"onDoorbell","srcServiceID":"e70ff61e-9a64-4996-93b6-40547ce92f89"}
+Processing message
+Message Received: {"action":"sendLocation","actionInput":"parth","properties":{},"serviceID":[],"serviceTypes":[],"srcServiceID":"3e1d60c4-1c83-44ae-899d-6d96cea753e6"}
+Processing message
+Message Received: {"properties":{},"serviceID":["3e1d60c4-1c83-44ae-899d-6d96cea753e6"],"serviceTypes":[],"srcServiceID":"dc8820c3-e6e3-4e38-a1ab-66d5c5612d20","triggerData":"scs+first+classroom+notset+notset","triggerName":"getLocation"}
+Processing message
+Message Received: {"action":"notify","properties":{"Location":{"USERTAG":"notset","ROOM":"classroom","PROPERTYNAME":"Location","FLOOR":"first","HOME":"scs","INROOM":"notset"}},"serviceID":[],"serviceTypes":["Speaker"],"srcServiceID":"3e1d60c4-1c83-44ae-899d-6d96cea753e6"}
+Processing message
+Message Received: {"action":"notify","properties":{"Location":{"USERTAG":"notset","ROOM":"classroom","PROPERTYNAME":"Location","FLOOR":"first","HOME":"scs","INROOM":"notset"}},"serviceID":[],"serviceTypes":["LED"],"srcServiceID":"3e1d60c4-1c83-44ae-899d-6d96cea753e6"}
+Processing message
