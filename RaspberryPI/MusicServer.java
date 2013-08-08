@@ -25,7 +25,7 @@ public class MusicServer {
 		sdl = new ServiceDiscoveryLayer(true, false);
 		sdl.registerApp(new MusicServer());
 		connections = new HashMap<String, Process>();
-		currentPort = 8553;
+		currentPort = 8554;
 		serviceId = sdl.registerNewService("MusicServer");
 		// and two triggers one for listSongs other for serverStarted
 		sdl.registerActions(serviceId, "getSongs","getSongs", MusicServer.class);

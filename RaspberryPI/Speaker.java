@@ -75,6 +75,8 @@ public class Speaker {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			playing = 1;
+			new Thread(new tensec()).start();
 		}
 	}
 
@@ -123,5 +125,19 @@ public class Speaker {
 		sdl.sendMessage(message);
 	}
 
+	private class tensec implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(22*1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			playing = 0;
+		}
+		
+	}
 
 }
