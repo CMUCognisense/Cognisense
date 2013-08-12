@@ -67,7 +67,8 @@ public class Speaker {
 
 
 	public void notify(Object actioninput, Object srcServiceId) {
-		if(playing == 0) {			
+		if(playing == 0) {	
+			playing = 1;
 			String[] commands = new String[] {"python","gstScript/doorbell.py"};
 			System.out.println("Notifying now ");
 			try {
@@ -75,7 +76,6 @@ public class Speaker {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			playing = 1;
 			new Thread(new tensec()).start();
 		}
 	}
@@ -130,7 +130,7 @@ public class Speaker {
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(22*1000);
+				Thread.sleep(10*1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
